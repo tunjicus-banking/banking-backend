@@ -1,0 +1,25 @@
+#!/bin/bash
+wait_time=15s
+password=Strong_Pa55word
+currentDate="$(date +%Y%m%d)"
+export currentDate=$currentDate
+echo "$currentDate"
+
+# wait for SQL Server to come up
+echo importing data will start in $wait_time...
+sleep $wait_time
+echo importing data...
+
+function run_script {
+  if [[ -z $1 ]]; then
+    echo "missing argument"
+  fi
+  /opt/mssql-tools/bin/sqlcmd -S 0.0.0.0 -U sa -P $password -i "./$1.sql"
+}
+
+# Create db
+run_script "create_db"
+
+# Create tables
+run_script "create_banks"
+run_script "create_users"

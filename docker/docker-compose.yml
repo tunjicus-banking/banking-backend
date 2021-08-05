@@ -1,0 +1,14 @@
+services:
+  mssql:
+    image: mcr.microsoft.com/mssql/server:2019-latest
+    container_name: banking-db
+    restart: unless-stopped
+    ports:
+      - 1433:1433
+    environment:
+      - ACCEPT_EULA=Y
+      - SA_PASSWORD=Strong_Pa55word
+    volumes:
+      - ./scripts:/scripts
+    working_dir: /scripts
+    command: sh -c 'bash /scripts/entrypoint.sh & /opt/mssql/bin/sqlservr;'
