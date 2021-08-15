@@ -20,9 +20,8 @@ public class User {
     private int id;
 
     @Column(unique = true)
-    @Email
-    @NotBlank(message = "email cannot be blank")
-    private String email;
+    @NotBlank(message = "username cannot be blank")
+    private String username;
 
     @Column
     @NotBlank(message = "first name cannot be blank")

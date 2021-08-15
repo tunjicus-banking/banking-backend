@@ -1,5 +1,8 @@
 package com.tunjicus.bank.accounts.dtos;
 
+import com.fasterxml.jackson.annotation.JsonFormat;
+import com.tunjicus.bank.accounts.models.Account;
+import com.tunjicus.bank.accounts.AccountType;
 import lombok.Getter;
 import lombok.Setter;
 
@@ -9,6 +12,29 @@ import java.util.Date;
 @Getter
 @Setter
 public class GetAccountDto {
+    private int id;
+    private int userId;
+    private int bankId;
+    private AccountType type;
     private BigDecimal funds;
+
+    @JsonFormat(pattern = "yyyy-MM-dd")
     private Date createdAt;
+
+    public GetAccountDto(Account account) {
+        id = account.getId();
+        userId = account.getUserId();
+        bankId = account.getBankId();
+        type = convertType(account.getType());
+        funds = account.getFunds();
+        createdAt = account.getCreatedAt();
+    }
+
+    private static AccountType convertType(String type) {
+        return switch (type) {
+            case "C" -> AccountType.CHECKING;
+            case "S" -> AccountType.SAVINGS;
+            default -> AccountType.UNKNOWN;
+        };
+    }
 }

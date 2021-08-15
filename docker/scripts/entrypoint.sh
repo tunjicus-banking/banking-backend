@@ -23,3 +23,7 @@ run_script "create_db"
 # Create tables
 run_script "create_banks"
 run_script "create_users"
+run_script "create_accounts"
+run_script "create_savings"
+run_script "create_checking"
+run_script "create_transactions"

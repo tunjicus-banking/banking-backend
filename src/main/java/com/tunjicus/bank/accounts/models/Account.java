@@ -1,11 +1,9 @@
-package com.tunjicus.bank.accounts;
+package com.tunjicus.bank.accounts.models;
 
-import com.fasterxml.jackson.annotation.JsonIgnore;
-import com.fasterxml.jackson.annotation.JsonProperty;
-import com.tunjicus.bank.users.User;
+import com.tunjicus.bank.accounts.dtos.PostAccountDto;
 import lombok.Getter;
 import lombok.Setter;
-import lombok.ToString;
+import org.hibernate.validator.constraints.Length;
 
 import javax.persistence.*;
 import javax.validation.constraints.NotBlank;
@@ -22,14 +20,18 @@ public class Account {
     @Column(name = "account_id")
     private int id;
 
-    @ManyToOne(fetch = FetchType.LAZY, optional = false)
-    @JoinColumn(name = "user_id")
-    @JsonIgnore
-    private transient User user;
+    @Column
+    @NotNull
+    private int userId;
+
+    @Column
+    @NotNull
+    private int bankId;
 
     @Column
     @NotBlank
-    private char type;
+    @Length(min = 1, max = 1)
+    private String type;
 
     @Column
     @NotNull
@@ -38,4 +40,13 @@ public class Account {
     @Column(insertable = false, updatable = false)
     @Temporal(TemporalType.TIMESTAMP)
     private Date createdAt;
+
+    public Account() {}
+
+    public Account(PostAccountDto accountDto) {
+        userId = accountDto.getUserId();
+        bankId = accountDto.getBankId();
+        type = accountDto.getType().label;
+        funds = BigDecimal.valueOf(0);
+    }
 }
