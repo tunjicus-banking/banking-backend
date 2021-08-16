@@ -2,6 +2,7 @@ package com.tunjicus.bank.accounts;
 
 import com.tunjicus.bank.accounts.dtos.GetAccountDto;
 import com.tunjicus.bank.accounts.dtos.PostAccountDto;
+import io.swagger.v3.oas.annotations.tags.Tag;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.HttpStatus;
 import org.springframework.web.bind.annotation.*;
@@ -13,6 +14,7 @@ import java.util.ArrayList;
 @RestController
 @RequestMapping("/account")
 @RequiredArgsConstructor
+@Tag(name = "Accounts", description = "Operations for bank accounts")
 public class AccountController {
     private final AccountService accountService;
 

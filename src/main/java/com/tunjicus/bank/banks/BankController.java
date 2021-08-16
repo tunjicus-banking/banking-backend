@@ -1,5 +1,6 @@
 package com.tunjicus.bank.banks;
 
+import io.swagger.v3.oas.annotations.tags.Tag;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.HttpStatus;
 import org.springframework.web.bind.annotation.*;
@@ -10,6 +11,7 @@ import java.util.List;
 @RestController
 @RequestMapping("/bank")
 @RequiredArgsConstructor
+@Tag(name = "Banks", description = "Crud operations for banks")
 public class BankController {
     private final BankRepository bankRepository;
 

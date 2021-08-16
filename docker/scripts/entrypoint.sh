@@ -27,3 +27,10 @@ run_script "create_accounts"
 run_script "create_savings"
 run_script "create_checking"
 run_script "create_transactions"
+
+# Insert data
+run_script "insert_banks"
+run_script "insert_users"
+run_script "insert_accounts"
+run_script "insert_savings"
+run_script "insert_checking"

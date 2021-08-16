@@ -1,5 +1,6 @@
 package com.tunjicus.bank.users;
 
+import com.tunjicus.bank.users.exceptions.UserNotFoundException;
 import lombok.RequiredArgsConstructor;
 import org.apache.logging.log4j.util.Strings;
 import org.springframework.stereotype.Service;
@@ -13,8 +14,12 @@ import java.util.Optional;
 public class UserService {
     private final UserRepository userRepository;
 
-    public Optional<User> findById(int id) {
-        return userRepository.findById(id);
+    public User findById(int id) {
+        var user = userRepository.findById(id);
+        if (user.isEmpty()) {
+            throw new UserNotFoundException(String.format("cannot find user with id: %d", id));
+        }
+        return user.get();
     }
 
     public User save(User user) {

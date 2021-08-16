@@ -19,11 +19,23 @@ public class Transaction {
     @Column(name = "transaction_id")
     private long id;
 
-    @Column(name = "from_user")
-    private int from;
+    @Column
+    private int fromUser;
 
-    @Column(name = "to_user")
-    private int to;
+    @Column
+    private int toUser;
+
+    @Column
+    private int fromAccount;
+
+    @Column
+    private String fromType;
+
+    @Column
+    private int toAccount;
+
+    @Column
+    private String toType;
 
     @Column
     private BigDecimal amount;
@@ -33,9 +45,13 @@ public class Transaction {
 //    @JsonFormat(pattern = "yyyy-MM-dd")
     private Date transactionTime;
 
-    public Transaction(PostTransactionDto transactionDto) {
-        from = transactionDto.getFrom();
-        to = transactionDto.getTo();
+    public Transaction(PostTransactionDto transactionDto, TransactionAccountInfo info) {
+        fromUser = transactionDto.getFrom();
+        toUser = transactionDto.getTo();
+        fromAccount = info.fromAccount();
+        fromType = info.fromType();
+        toAccount = info.toAccount();
+        toType = info.toType();
         amount = transactionDto.getAmount();
     }
 }

@@ -3,6 +3,8 @@ package com.tunjicus.bank.transactions;
 import com.tunjicus.bank.accounts.AccountType;
 import com.tunjicus.bank.accounts.models.Account;
 import com.tunjicus.bank.accounts.repositories.AccountRepository;
+import com.tunjicus.bank.shared.MediaType;
+import com.tunjicus.bank.transactions.dtos.GetTransactionDto;
 import com.tunjicus.bank.transactions.dtos.PostTransactionDto;
 import com.tunjicus.bank.transactions.exceptions.InsufficientFundsException;
 import com.tunjicus.bank.transactions.exceptions.NoCheckingAccountException;
@@ -23,7 +25,7 @@ public class TransactionService {
     private final AccountRepository accountRepository;
     private final UserRepository userRepository;
 
-    Transaction usersTransfer(PostTransactionDto transactionDto) {
+    GetTransactionDto usersTransfer(PostTransactionDto transactionDto) {
         if (transactionDto.getFrom() == transactionDto.getTo()) {
             throw new SelfTransferException("self transfer via this method is not allowed");
         }
@@ -47,24 +49,24 @@ public class TransactionService {
         return saveTransaction(fromAccount.get(), toAccount.get(), transactionDto);
     }
 
-    Transaction selfTransfer(PostTransactionDto transactionDto) {
-        var fromAccount =
-                accountRepository.findByUserIdEqualsAndFundsGreaterThanEqual(
-                        transactionDto.getFrom(), transactionDto.getAmount());
-        var toAccount = accountRepository.findById(transactionDto.getTo());
+//    Transaction selfTransfer(PostTransactionDto transactionDto) {
+//        var fromAccount =
+//                accountRepository.findByUserIdEqualsAndFundsGreaterThanEqual(
+//                        transactionDto.getFrom(), transactionDto.getAmount());
+//        var toAccount = accountRepository.findById(transactionDto.getTo());
+//
+//        if (fromAccount.isEmpty()) {
+//            throw new InsufficientFundsException("failed to find valid sending account");
+//        }
+//
+//        if (toAccount.isEmpty()) {
+//            throw new TransactionException("failed to find to account");
+//        }
+//
+//        return saveTransaction(fromAccount.get(), toAccount.get(), transactionDto);
+//    }
 
-        if (fromAccount.isEmpty()) {
-            throw new InsufficientFundsException("failed to find valid sending account");
-        }
-
-        if (toAccount.isEmpty()) {
-            throw new TransactionException("failed to find to account");
-        }
-
-        return saveTransaction(fromAccount.get(), toAccount.get(), transactionDto);
-    }
-
-    private Transaction saveTransaction(
+    private GetTransactionDto saveTransaction(
             Account fromAccount, Account toAccount, PostTransactionDto transactionDto) {
         fromAccount.setFunds(fromAccount.getFunds().subtract(transactionDto.getAmount()));
         toAccount.setFunds(toAccount.getFunds().add(transactionDto.getAmount()));
@@ -72,8 +74,9 @@ public class TransactionService {
         accountRepository.save(fromAccount);
         accountRepository.save(toAccount);
 
-        var t = transactionRepository.save(new Transaction(transactionDto));
+        var info = new TransactionAccountInfo(fromAccount.getId(), fromAccount.getType(), toAccount.getId(), toAccount.getType());
+        var t = transactionRepository.save(new Transaction(transactionDto, info));
         t.setTransactionTime(new Date());
-        return t;
+        return new GetTransactionDto(t);
     }
 }

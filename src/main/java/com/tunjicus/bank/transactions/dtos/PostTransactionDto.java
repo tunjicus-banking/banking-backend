@@ -10,7 +10,7 @@ import java.math.BigDecimal;
 
 @Getter
 @Setter
-public class PostTransactionDto {
+public final class PostTransactionDto {
     @NotNull(message = "from cannot be null")
     @Positive(message = "from must be positive")
     private int from;

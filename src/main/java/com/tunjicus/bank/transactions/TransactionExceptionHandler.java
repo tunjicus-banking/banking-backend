@@ -1,5 +1,6 @@
 package com.tunjicus.bank.transactions;
 
+import com.tunjicus.bank.shared.ErrorResponse;
 import com.tunjicus.bank.transactions.exceptions.InsufficientFundsException;
 import com.tunjicus.bank.transactions.exceptions.NoCheckingAccountException;
 import com.tunjicus.bank.transactions.exceptions.SelfTransferException;
@@ -18,8 +19,8 @@ public class TransactionExceptionHandler extends ResponseEntityExceptionHandler 
         NoCheckingAccountException.class,
         TransactionException.class
     })
-    public ResponseEntity<ErrorResponse> handleUserExceptions(Exception ex) {
+    public ResponseEntity<ErrorResponse> handleTransactionExceptions(Exception e) {
         return ResponseEntity.status(HttpStatus.BAD_REQUEST)
-                .body(new ErrorResponse(HttpStatus.BAD_REQUEST, ex.getLocalizedMessage()));
+                .body(new ErrorResponse(HttpStatus.BAD_REQUEST, e.getLocalizedMessage()));
     }
 }
