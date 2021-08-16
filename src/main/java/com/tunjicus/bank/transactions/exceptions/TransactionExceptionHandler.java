@@ -1,4 +1,4 @@
-package com.tunjicus.bank.transactions;
+package com.tunjicus.bank.transactions.exceptions;
 
 import com.tunjicus.bank.shared.ErrorResponse;
 import com.tunjicus.bank.transactions.exceptions.InsufficientFundsException;

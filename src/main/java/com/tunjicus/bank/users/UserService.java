@@ -7,6 +7,7 @@ import org.springframework.stereotype.Service;
 
 import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.List;
 import java.util.Optional;
 
 @Service
@@ -17,7 +18,7 @@ public class UserService {
     public User findById(int id) {
         var user = userRepository.findById(id);
         if (user.isEmpty()) {
-            throw new UserNotFoundException(String.format("cannot find user with id: %d", id));
+            throw new UserNotFoundException(id);
         }
         return user.get();
     }
@@ -26,7 +27,7 @@ public class UserService {
         return userRepository.save(user);
     }
 
-    public ArrayList<User> findByName(String name) {
+    public List<User> findByName(String name) {
         if (name.isEmpty()) {
             return new ArrayList<>();
         }
@@ -38,9 +39,9 @@ public class UserService {
                             Arrays.copyOfRange(nameSplit, 1, nameSplit.length)
                     ),
                     ' ');
-            return (ArrayList<User>) userRepository.findUsersByFirstNameContainsAndLastNameContains(firstName, lastname);
+            return (List<User>) userRepository.findUsersByFirstNameContainsAndLastNameContains(firstName, lastname);
         }
 
-        return (ArrayList<User>) userRepository.findUsersByFirstNameContains(firstName);
+        return (List<User>) userRepository.findUsersByFirstNameContains(firstName);
     }
 }

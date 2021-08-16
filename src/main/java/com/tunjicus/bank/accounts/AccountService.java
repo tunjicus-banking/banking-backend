@@ -2,6 +2,8 @@ package com.tunjicus.bank.accounts;
 
 import com.tunjicus.bank.accounts.dtos.GetAccountDto;
 import com.tunjicus.bank.accounts.dtos.PostAccountDto;
+import com.tunjicus.bank.accounts.exceptions.AccountNotFoundException;
+import com.tunjicus.bank.accounts.exceptions.IllegalAccountCreationException;
 import com.tunjicus.bank.accounts.models.Account;
 import com.tunjicus.bank.accounts.models.CheckingAccount;
 import com.tunjicus.bank.accounts.models.SavingsAccount;
@@ -9,11 +11,14 @@ import com.tunjicus.bank.accounts.repositories.AccountRepository;
 import com.tunjicus.bank.accounts.repositories.CheckingRepository;
 import com.tunjicus.bank.accounts.repositories.SavingsRepository;
 import com.tunjicus.bank.users.UserRepository;
+import com.tunjicus.bank.users.exceptions.UserNotFoundException;
 import lombok.RequiredArgsConstructor;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import org.springframework.http.HttpStatus;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
+import org.springframework.web.server.ResponseStatusException;
 
 import java.util.ArrayList;
 import java.util.Date;
@@ -29,34 +34,41 @@ public class AccountService {
 
     Logger logger = LoggerFactory.getLogger(AccountService.class);
 
-    ArrayList<GetAccountDto> findAll() {
-        var accounts = accountRepository.findAll();
-        ArrayList<GetAccountDto> accountDtos = new ArrayList<>();
-
-        accounts.forEach(a -> accountDtos.add(new GetAccountDto(a)));
-
-        return accountDtos;
-    }
-
-    Optional<GetAccountDto> findById(int id) {
-        var account = accountRepository.findById(id);
+    GetAccountDto findById(int id) {
+        var account = accountRepository.findByIdAndClosedIsFalse(id);
         if (account.isEmpty()) {
-            return Optional.empty();
+            throw new AccountNotFoundException(id);
         }
-        return Optional.of(new GetAccountDto(account.get()));
+
+        return new GetAccountDto(account.get());
     }
 
     @Transactional
-    GetAccountDto save(PostAccountDto accountDto) throws InvalidUserException {
+    GetAccountDto save(PostAccountDto accountDto) {
+        if (accountDto.getType() == AccountType.UNKNOWN) {
+            throw new IllegalAccountCreationException();
+        }
+
         var user = userRepository.findById(accountDto.getUserId());
         if (user.isEmpty()) {
-            throw new InvalidUserException();
+            throw new UserNotFoundException(accountDto.getUserId());
         }
 
         var account = accountRepository.save(new Account(accountDto));
         createUnderlyingAccount(account.getType(), account.getId());
         account.setCreatedAt(new Date());
         return new GetAccountDto(account);
+    }
+
+    void delete(int id) {
+        var oAccount = accountRepository.findByIdAndClosedIsFalse(id);
+        if (oAccount.isEmpty()) {
+            throw new AccountNotFoundException(id);
+        }
+
+        var account = oAccount.get();
+        account.setClosed(true);
+        accountRepository.save(account);
     }
 
     private void createUnderlyingAccount(String type, int id) {

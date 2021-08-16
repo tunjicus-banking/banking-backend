@@ -2,14 +2,19 @@ package com.tunjicus.bank.accounts;
 
 import com.tunjicus.bank.accounts.dtos.GetAccountDto;
 import com.tunjicus.bank.accounts.dtos.PostAccountDto;
+import com.tunjicus.bank.shared.ErrorResponse;
+import io.swagger.v3.oas.annotations.Operation;
+import io.swagger.v3.oas.annotations.Parameter;
+import io.swagger.v3.oas.annotations.media.Content;
+import io.swagger.v3.oas.annotations.media.Schema;
+import io.swagger.v3.oas.annotations.responses.ApiResponse;
 import io.swagger.v3.oas.annotations.tags.Tag;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.HttpStatus;
+import org.springframework.http.MediaType;
 import org.springframework.web.bind.annotation.*;
-import org.springframework.web.server.ResponseStatusException;
 
 import javax.validation.Valid;
-import java.util.ArrayList;
 
 @RestController
 @RequestMapping("/account")
@@ -18,36 +23,78 @@ import java.util.ArrayList;
 public class AccountController {
     private final AccountService accountService;
 
-    @GetMapping
-    public ArrayList<GetAccountDto> getAll() {
-        return accountService.findAll();
-    }
-
+    @Operation(
+            summary = "Gets an individual account",
+            responses = {
+                @ApiResponse(
+                        responseCode = "200",
+                        description = "Account has been found",
+                        content =
+                                @Content(
+                                        mediaType = MediaType.APPLICATION_JSON_VALUE,
+                                        schema = @Schema(implementation = GetAccountDto.class))),
+                @ApiResponse(
+                        responseCode = "404",
+                        description = "Account has not been found (closed or doesn't exist)",
+                        content =
+                                @Content(
+                                        mediaType = MediaType.APPLICATION_JSON_VALUE,
+                                        schema = @Schema(implementation = ErrorResponse.class)))
+            })
     @GetMapping("/{id}")
-    public GetAccountDto get(@PathVariable int id) {
-        var account = accountService.findById(id);
-        if (account.isEmpty()) {
-            throw new ResponseStatusException(
-                    HttpStatus.NOT_FOUND, "Not Found"
-            );
-        }
-        return account.get();
+    public GetAccountDto get(
+            @Parameter(required = true, description = "The id of the account") @PathVariable
+                    int id) {
+        return accountService.findById(id);
     }
 
+    @Operation(
+            summary = "Creates a bank account for a user",
+            responses = {
+                @ApiResponse(
+                        responseCode = "201",
+                        description = "Account successfully created",
+                        content =
+                                @Content(
+                                        mediaType = MediaType.APPLICATION_JSON_VALUE,
+                                        schema = @Schema(implementation = GetAccountDto.class))),
+                @ApiResponse(
+                        responseCode = "400",
+                        description = "Attempted to create an account of type unknown",
+                        content =
+                                @Content(
+                                        mediaType = MediaType.APPLICATION_JSON_VALUE,
+                                        schema = @Schema(implementation = ErrorResponse.class))),
+                @ApiResponse(
+                        responseCode = "404",
+                        description = "Failed to find the user the account was intended for",
+                        content =
+                                @Content(
+                                        mediaType = MediaType.APPLICATION_JSON_VALUE,
+                                        schema = @Schema(implementation = ErrorResponse.class)))
+            })
     @PostMapping
+    @ResponseStatus(HttpStatus.CREATED)
     public GetAccountDto create(@Valid @RequestBody PostAccountDto accountDto) {
-        if (accountDto.getType() == AccountType.UNKNOWN) {
-            throw new ResponseStatusException(
-                    HttpStatus.BAD_REQUEST, "Cannot create unknown account"
-            );
-        }
+        return accountService.save(accountDto);
+    }
 
-        try {
-            return accountService.save(accountDto);
-        } catch (InvalidUserException e) {
-            throw new ResponseStatusException(
-                    HttpStatus.BAD_REQUEST, "Invalid user"
-            );
-        }
+    @Operation(
+            summary = "Deletes an account",
+            responses = {
+                @ApiResponse(responseCode = "200", description = "The account has been deleted"),
+                @ApiResponse(
+                        responseCode = "404",
+                        description = "The account cannot be found",
+                        content =
+                                @Content(
+                                        mediaType = MediaType.APPLICATION_JSON_VALUE,
+                                        schema = @Schema(implementation = ErrorResponse.class)))
+            })
+    @DeleteMapping("/{id}")
+    public void delete(
+            @Parameter(required = true, description = "The id of the account") @PathVariable
+                    int id) {
+        accountService.delete(id);
     }
 }

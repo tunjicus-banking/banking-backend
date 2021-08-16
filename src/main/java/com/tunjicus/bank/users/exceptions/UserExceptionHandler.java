@@ -1,4 +1,4 @@
-package com.tunjicus.bank.users;
+package com.tunjicus.bank.users.exceptions;
 
 import com.tunjicus.bank.shared.ErrorResponse;
 import com.tunjicus.bank.users.exceptions.UserNotFoundException;

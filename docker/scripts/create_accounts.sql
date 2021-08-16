@@ -11,6 +11,7 @@ create table accounts
     bank_id    int        not null,
     user_id    int        not null,
     funds      money      not null,
+    closed     bit       default 0,
     created_at datetime2 default GETDATE(),
 
     constraint PK_accounts primary key (account_id, type),

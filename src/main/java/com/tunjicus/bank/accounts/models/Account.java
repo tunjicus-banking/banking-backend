@@ -37,6 +37,9 @@ public class Account {
     @NotNull
     private BigDecimal funds;
 
+    @Column
+    private boolean closed;
+
     @Column(insertable = false, updatable = false)
     @Temporal(TemporalType.TIMESTAMP)
     private Date createdAt;
