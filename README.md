@@ -15,5 +15,5 @@ The build tool for this project is Maven. There is a Maven wrapper in the repo, 
 it installed to start. `mvnw.cmd` is for Windows `mvnw` is for everyone else. You can build
 the project by running `./mvnw package` and then run the application by running `./mvnw spring-boot:run`
 
-By default, the application runs on port `8080`. You change it by changing the `server-port`
+By default, the application runs on port `8080`. You change it by changing the `server.port`
 property [here](/src/main/resources/application.properties).
