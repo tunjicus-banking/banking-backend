@@ -4,6 +4,7 @@ import com.tunjicus.bank.shared.ErrorResponse;
 import com.tunjicus.bank.shared.MediaType;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.Parameter;
+import io.swagger.v3.oas.annotations.media.ArraySchema;
 import io.swagger.v3.oas.annotations.media.Content;
 import io.swagger.v3.oas.annotations.media.Schema;
 import io.swagger.v3.oas.annotations.responses.ApiResponse;
@@ -22,7 +23,6 @@ import java.util.ArrayList;
 public class UserController {
     private final UserService userService;
 
-    @GetMapping("/{id}")
     @Operation(
             summary = "Gets an individual user",
             responses = {
@@ -42,19 +42,50 @@ public class UserController {
                                     schema = @Schema(implementation = ErrorResponse.class))
                         })
             })
+    @GetMapping("/{id}")
     public User get(
             @Parameter(required = true, description = "The id of the user") @PathVariable int id) {
         return userService.findById(id);
     }
 
+    @Operation(
+            summary = "Creates a user",
+            responses = {
+                @ApiResponse(
+                        responseCode = "201",
+                        description = "User has been created",
+                        content =
+                                @Content(
+                                        mediaType = MediaType.JSON,
+                                        schema = @Schema(implementation = User.class)))
+            })
     @PostMapping
     @ResponseStatus(HttpStatus.CREATED)
     public User create(@Valid @RequestBody User user) {
         return userService.save(user);
     }
 
+    @Operation(
+            summary = "Finds users based on name",
+            responses = {
+                @ApiResponse(
+                        responseCode = "200",
+                        description = "Search was run without any errors",
+                        content =
+                                @Content(
+                                        mediaType = MediaType.JSON,
+                                        array =
+                                                @ArraySchema(
+                                                        schema =
+                                                                @Schema(
+                                                                        implementation =
+                                                                                User.class))))
+            })
     @GetMapping("/find")
-    public ArrayList<User> getByName(@RequestParam("name") String name) {
+    public ArrayList<User> getByName(
+            @Parameter(required = true, description = "The name to search for")
+                    @RequestParam("name")
+                    String name) {
         return userService.findByName(name);
     }
 }
