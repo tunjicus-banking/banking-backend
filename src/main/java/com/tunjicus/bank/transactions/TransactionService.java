@@ -1,14 +1,16 @@
 package com.tunjicus.bank.transactions;
 
 import com.tunjicus.bank.accounts.AccountType;
+import com.tunjicus.bank.accounts.exceptions.AccountNotFoundException;
+import com.tunjicus.bank.accounts.exceptions.ValidAccountNotFoundException;
 import com.tunjicus.bank.accounts.models.Account;
 import com.tunjicus.bank.accounts.repositories.AccountRepository;
 import com.tunjicus.bank.transactions.dtos.GetTransactionDto;
 import com.tunjicus.bank.transactions.dtos.PostTransactionDto;
+import com.tunjicus.bank.transactions.dtos.SelfTransferDto;
 import com.tunjicus.bank.transactions.exceptions.InsufficientFundsException;
 import com.tunjicus.bank.transactions.exceptions.NoCheckingAccountException;
 import com.tunjicus.bank.transactions.exceptions.SelfTransferException;
-import com.tunjicus.bank.users.UserRepository;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -47,22 +49,36 @@ public class TransactionService {
         return saveTransaction(fromAccount.get(), toAccount.get(), transactionDto);
     }
 
-    //    Transaction selfTransfer(PostTransactionDto transactionDto) {
-    //        var fromAccount =
-    //                accountRepository.findByUserIdEqualsAndFundsGreaterThanEqual(
-    //                        transactionDto.getFrom(), transactionDto.getAmount());
-    //        var toAccount = accountRepository.findById(transactionDto.getTo());
-    //
-    //        if (fromAccount.isEmpty()) {
-    //            throw new InsufficientFundsException("failed to find valid sending account");
-    //        }
-    //
-    //        if (toAccount.isEmpty()) {
-    //            throw new TransactionException("failed to find to account");
-    //        }
-    //
-    //        return saveTransaction(fromAccount.get(), toAccount.get(), transactionDto);
-    //    }
+    public SelfTransferDto selfTransfer(SelfTransferDto dto) {
+        if (dto.getFrom() == dto.getTo()) {
+            throw new SelfTransferException("Cannot transfer between the same account");
+        }
+
+        var from =
+                accountRepository.findByUserIdEqualsAndIdEqualsAndFundsGreaterThanAndClosedIsFalse(
+                        dto.getUserId(), dto.getFrom(), dto.getAmount());
+        var to = accountRepository.findByUserIdEqualsAndIdEqualsAndClosedIsFalse(dto.getUserId(), dto.getTo());
+
+        if (from.isEmpty()) {
+            throw new ValidAccountNotFoundException(dto.getUserId(), dto.getFrom());
+        }
+
+        if (to.isEmpty()) {
+            throw new ValidAccountNotFoundException(dto.getUserId(), dto.getTo());
+        }
+
+        var fromAccount = from.get();
+        var toAccount = to.get();
+        fromAccount.setFunds(fromAccount.getFunds().subtract(dto.getAmount()));
+        toAccount.setFunds(toAccount.getFunds().add(dto.getAmount()));
+
+        accountRepository.save(fromAccount);
+        accountRepository.save(toAccount);
+        var t = transactionRepository.save(new Transaction(dto, fromAccount.getType(), toAccount.getType()));
+        t.setTransactionTime(new Date());
+
+        return new SelfTransferDto(t);
+    }
 
     private GetTransactionDto saveTransaction(
             Account fromAccount, Account toAccount, PostTransactionDto transactionDto) {

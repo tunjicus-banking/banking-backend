@@ -1,6 +1,8 @@
 package com.tunjicus.bank.users;
 
 import com.tunjicus.bank.shared.ErrorResponse;
+import com.tunjicus.bank.transactions.TransactionService;
+import com.tunjicus.bank.transactions.dtos.SelfTransferDto;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.Parameter;
 import io.swagger.v3.oas.annotations.media.ArraySchema;
@@ -14,7 +16,6 @@ import org.springframework.http.MediaType;
 import org.springframework.web.bind.annotation.*;
 
 import javax.validation.Valid;
-import java.util.ArrayList;
 import java.util.List;
 
 @RestController
@@ -23,6 +24,7 @@ import java.util.List;
 @Tag(name = "Users", description = "Bank users")
 public class UserController {
     private final UserService userService;
+    private final TransactionService transactionService;
 
     @Operation(
             summary = "Gets an individual user",
@@ -88,5 +90,29 @@ public class UserController {
                     @RequestParam("name")
                     String name) {
         return userService.findByName(name);
+    }
+
+    @Operation(
+            summary = "Make a transfer between a user's accounts",
+            responses = {
+                @ApiResponse(
+                        responseCode = "201",
+                        description = "Transfer was successful",
+                        content =
+                                @Content(
+                                        mediaType = MediaType.APPLICATION_JSON_VALUE,
+                                        schema = @Schema(implementation = SelfTransferDto.class))),
+                @ApiResponse(
+                        responseCode = "400",
+                        description = "Failed to valid accounts for the user",
+                        content =
+                                @Content(
+                                        mediaType = MediaType.APPLICATION_JSON_VALUE,
+                                        schema = @Schema(implementation = ErrorResponse.class)))
+            })
+    @PostMapping("/transfer")
+    @ResponseStatus(HttpStatus.CREATED)
+    public SelfTransferDto transfer(@Valid @RequestBody SelfTransferDto dto) {
+        return transactionService.selfTransfer(dto);
     }
 }

@@ -16,7 +16,7 @@ public class AccountExceptionHandler extends ResponseEntityExceptionHandler {
                 .body(new ErrorResponse(HttpStatus.NOT_FOUND, e.getLocalizedMessage()));
     }
 
-    @ExceptionHandler(IllegalAccountCreationException.class)
+    @ExceptionHandler({IllegalAccountCreationException.class, ValidAccountNotFoundException.class})
     public ResponseEntity<ErrorResponse> handleIllegalAccountCreation(Exception e) {
         return ResponseEntity.status(HttpStatus.BAD_REQUEST)
                 .body(new ErrorResponse(HttpStatus.BAD_REQUEST, e.getLocalizedMessage()));
