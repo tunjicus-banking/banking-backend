@@ -7,10 +7,10 @@ go
 create table accounts
 (
     account_id int identity,
-    type       varchar(1) not null,
-    bank_id    int        not null,
-    user_id    int        not null,
-    funds      money      not null,
+    type       nvarchar(1) not null,
+    bank_id    int         not null,
+    user_id    int         not null,
+    funds      money       not null,
     closed     bit       default 0,
     created_at datetime2 default GETDATE(),
 

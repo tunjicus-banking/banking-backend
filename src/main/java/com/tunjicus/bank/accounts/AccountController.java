@@ -17,7 +17,7 @@ import org.springframework.web.bind.annotation.*;
 import javax.validation.Valid;
 
 @RestController
-@RequestMapping("/account")
+@RequestMapping(value = "/account", produces = MediaType.APPLICATION_JSON_VALUE)
 @RequiredArgsConstructor
 @Tag(name = "Accounts", description = "Operations for bank accounts")
 public class AccountController {
@@ -26,20 +26,11 @@ public class AccountController {
     @Operation(
             summary = "Gets an individual account",
             responses = {
-                @ApiResponse(
-                        responseCode = "200",
-                        description = "Account has been found",
-                        content =
-                                @Content(
-                                        mediaType = MediaType.APPLICATION_JSON_VALUE,
-                                        schema = @Schema(implementation = GetAccountDto.class))),
+                @ApiResponse(responseCode = "200", description = "Account has been found"),
                 @ApiResponse(
                         responseCode = "404",
                         description = "Account has not been found (closed or doesn't exist)",
-                        content =
-                                @Content(
-                                        mediaType = MediaType.APPLICATION_JSON_VALUE,
-                                        schema = @Schema(implementation = ErrorResponse.class)))
+                        content = @Content(schema = @Schema(implementation = ErrorResponse.class)))
             })
     @GetMapping("/{id}")
     public GetAccountDto get(
@@ -51,27 +42,15 @@ public class AccountController {
     @Operation(
             summary = "Creates a bank account for a user",
             responses = {
-                @ApiResponse(
-                        responseCode = "201",
-                        description = "Account successfully created",
-                        content =
-                                @Content(
-                                        mediaType = MediaType.APPLICATION_JSON_VALUE,
-                                        schema = @Schema(implementation = GetAccountDto.class))),
+                @ApiResponse(responseCode = "201", description = "Account successfully created"),
                 @ApiResponse(
                         responseCode = "400",
                         description = "Attempted to create an account of type unknown",
-                        content =
-                                @Content(
-                                        mediaType = MediaType.APPLICATION_JSON_VALUE,
-                                        schema = @Schema(implementation = ErrorResponse.class))),
+                        content = @Content(schema = @Schema(implementation = ErrorResponse.class))),
                 @ApiResponse(
                         responseCode = "404",
                         description = "Failed to find the user the account was intended for",
-                        content =
-                                @Content(
-                                        mediaType = MediaType.APPLICATION_JSON_VALUE,
-                                        schema = @Schema(implementation = ErrorResponse.class)))
+                        content = @Content(schema = @Schema(implementation = ErrorResponse.class)))
             })
     @PostMapping
     @ResponseStatus(HttpStatus.CREATED)
@@ -86,10 +65,7 @@ public class AccountController {
                 @ApiResponse(
                         responseCode = "404",
                         description = "The account cannot be found",
-                        content =
-                                @Content(
-                                        mediaType = MediaType.APPLICATION_JSON_VALUE,
-                                        schema = @Schema(implementation = ErrorResponse.class)))
+                        content = @Content(schema = @Schema(implementation = ErrorResponse.class)))
             })
     @DeleteMapping("/{id}")
     public void delete(

@@ -5,21 +5,20 @@ import com.tunjicus.bank.transactions.TransactionService;
 import com.tunjicus.bank.transactions.dtos.SelfTransferDto;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.Parameter;
-import io.swagger.v3.oas.annotations.media.ArraySchema;
 import io.swagger.v3.oas.annotations.media.Content;
 import io.swagger.v3.oas.annotations.media.Schema;
 import io.swagger.v3.oas.annotations.responses.ApiResponse;
 import io.swagger.v3.oas.annotations.tags.Tag;
 import lombok.RequiredArgsConstructor;
+import org.springframework.data.domain.Page;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
 import org.springframework.web.bind.annotation.*;
 
 import javax.validation.Valid;
-import java.util.List;
 
 @RestController
-@RequestMapping("/user")
+@RequestMapping(value = "/user", produces = MediaType.APPLICATION_JSON_VALUE)
 @RequiredArgsConstructor
 @Tag(name = "Users", description = "Bank users")
 public class UserController {
@@ -29,21 +28,11 @@ public class UserController {
     @Operation(
             summary = "Gets an individual user",
             responses = {
-                @ApiResponse(
-                        responseCode = "200",
-                        description = "User has been found",
-                        content =
-                                @Content(
-                                        mediaType = MediaType.APPLICATION_JSON_VALUE,
-                                        schema = @Schema(implementation = User.class))),
+                @ApiResponse(responseCode = "200", description = "User has been found"),
                 @ApiResponse(
                         responseCode = "404",
                         description = "User has not been found",
-                        content = {
-                            @Content(
-                                    mediaType = MediaType.APPLICATION_JSON_VALUE,
-                                    schema = @Schema(implementation = ErrorResponse.class))
-                        })
+                        content = @Content(schema = @Schema(implementation = ErrorResponse.class)))
             })
     @GetMapping("/{id}")
     public User get(
@@ -53,15 +42,7 @@ public class UserController {
 
     @Operation(
             summary = "Creates a user",
-            responses = {
-                @ApiResponse(
-                        responseCode = "201",
-                        description = "User has been created",
-                        content =
-                                @Content(
-                                        mediaType = MediaType.APPLICATION_JSON_VALUE,
-                                        schema = @Schema(implementation = User.class)))
-            })
+            responses = {@ApiResponse(responseCode = "201", description = "User has been created")})
     @PostMapping
     @ResponseStatus(HttpStatus.CREATED)
     public User create(@Valid @RequestBody User user) {
@@ -73,42 +54,25 @@ public class UserController {
             responses = {
                 @ApiResponse(
                         responseCode = "200",
-                        description = "Search was run without any errors",
-                        content =
-                                @Content(
-                                        mediaType = MediaType.APPLICATION_JSON_VALUE,
-                                        array =
-                                                @ArraySchema(
-                                                        schema =
-                                                                @Schema(
-                                                                        implementation =
-                                                                                User.class))))
+                        description = "Search was run without any errors")
             })
     @GetMapping("/find")
-    public List<User> getByName(
-            @Parameter(required = true, description = "The name to search for")
-                    @RequestParam("name")
-                    String name) {
-        return userService.findByName(name);
+    public Page<User> getByName(
+            @Parameter(required = true, description = "The name to search for") @RequestParam
+                    String name,
+            @Parameter(description = "The page number") @RequestParam(defaultValue = "0") int page,
+            @Parameter(description = "The page size") @RequestParam(defaultValue = "20") int size) {
+        return userService.findByName(name, page, size);
     }
 
     @Operation(
             summary = "Make a transfer between a user's accounts",
             responses = {
-                @ApiResponse(
-                        responseCode = "201",
-                        description = "Transfer was successful",
-                        content =
-                                @Content(
-                                        mediaType = MediaType.APPLICATION_JSON_VALUE,
-                                        schema = @Schema(implementation = SelfTransferDto.class))),
+                @ApiResponse(responseCode = "201", description = "Transfer was successful"),
                 @ApiResponse(
                         responseCode = "400",
                         description = "Failed to valid accounts for the user",
-                        content =
-                                @Content(
-                                        mediaType = MediaType.APPLICATION_JSON_VALUE,
-                                        schema = @Schema(implementation = ErrorResponse.class)))
+                        content = @Content(schema = @Schema(implementation = ErrorResponse.class)))
             })
     @PostMapping("/transfer")
     @ResponseStatus(HttpStatus.CREATED)

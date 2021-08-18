@@ -1,14 +1,12 @@
 package com.tunjicus.bank.accounts.dtos;
 
-import com.tunjicus.bank.accounts.AccountType;
+import com.tunjicus.bank.accounts.enums.AccountType;
+import com.tunjicus.bank.accounts.enums.PostAccountType;
 import lombok.Getter;
 import lombok.Setter;
-import org.hibernate.validator.constraints.Length;
 
-import javax.validation.constraints.NotBlank;
 import javax.validation.constraints.NotNull;
 import javax.validation.constraints.Positive;
-import java.math.BigDecimal;
 
 @Getter
 @Setter
@@ -22,5 +20,5 @@ public class PostAccountDto {
     private int bankId;
 
     @NotNull(message = "type must not be null")
-    private AccountType type;
+    private PostAccountType type;
 }

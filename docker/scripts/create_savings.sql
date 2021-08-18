@@ -7,7 +7,7 @@ go
 create table savings_accounts
 (
     account_id        int           not null,
-    type              varchar(1)    not null,
+    type              nvarchar(1)   not null,
     transaction_limit tinyint default 6,
     interest_rate     numeric(5, 5) not null,
 

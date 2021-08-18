@@ -1,7 +1,6 @@
 package com.tunjicus.bank.transactions;
 
-import com.tunjicus.bank.accounts.AccountType;
-import com.tunjicus.bank.accounts.exceptions.AccountNotFoundException;
+import com.tunjicus.bank.accounts.enums.AccountType;
 import com.tunjicus.bank.accounts.exceptions.ValidAccountNotFoundException;
 import com.tunjicus.bank.accounts.models.Account;
 import com.tunjicus.bank.accounts.repositories.AccountRepository;

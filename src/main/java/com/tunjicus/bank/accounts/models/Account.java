@@ -1,6 +1,8 @@
 package com.tunjicus.bank.accounts.models;
 
 import com.tunjicus.bank.accounts.dtos.PostAccountDto;
+import com.tunjicus.bank.accounts.enums.AccountType;
+import com.tunjicus.bank.accounts.enums.PostAccountType;
 import lombok.Getter;
 import lombok.Setter;
 import org.hibernate.validator.constraints.Length;
@@ -49,7 +51,14 @@ public class Account {
     public Account(PostAccountDto accountDto) {
         userId = accountDto.getUserId();
         bankId = accountDto.getBankId();
-        type = accountDto.getType().label;
+        type = postAccountTypeToString(accountDto.getType());
         funds = BigDecimal.valueOf(0);
+    }
+
+    private static String postAccountTypeToString(PostAccountType accountType) {
+        return switch (accountType) {
+            case SAVINGS -> AccountType.SAVINGS.label;
+            case CHECKING -> AccountType.CHECKING.label;
+        };
     }
 }

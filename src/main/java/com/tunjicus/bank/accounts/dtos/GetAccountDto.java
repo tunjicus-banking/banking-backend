@@ -2,7 +2,7 @@ package com.tunjicus.bank.accounts.dtos;
 
 import com.fasterxml.jackson.annotation.JsonFormat;
 import com.tunjicus.bank.accounts.models.Account;
-import com.tunjicus.bank.accounts.AccountType;
+import com.tunjicus.bank.accounts.enums.AccountType;
 import lombok.Getter;
 import lombok.Setter;
 
@@ -34,7 +34,8 @@ public class GetAccountDto {
         return switch (type) {
             case "C" -> AccountType.CHECKING;
             case "S" -> AccountType.SAVINGS;
-            default -> AccountType.UNKNOWN;
+            case "B" -> AccountType.BRAND;
+            default -> throw new IllegalStateException("Unexpected value: " + type);
         };
     }
 }

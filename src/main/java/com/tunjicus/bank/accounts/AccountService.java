@@ -2,6 +2,7 @@ package com.tunjicus.bank.accounts;
 
 import com.tunjicus.bank.accounts.dtos.GetAccountDto;
 import com.tunjicus.bank.accounts.dtos.PostAccountDto;
+import com.tunjicus.bank.accounts.enums.AccountType;
 import com.tunjicus.bank.accounts.exceptions.AccountNotFoundException;
 import com.tunjicus.bank.accounts.exceptions.IllegalAccountCreationException;
 import com.tunjicus.bank.accounts.models.Account;
@@ -15,14 +16,10 @@ import com.tunjicus.bank.users.exceptions.UserNotFoundException;
 import lombok.RequiredArgsConstructor;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-import org.springframework.http.HttpStatus;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
-import org.springframework.web.server.ResponseStatusException;
 
-import java.util.ArrayList;
 import java.util.Date;
-import java.util.Optional;
 
 @Service
 @RequiredArgsConstructor
@@ -45,10 +42,6 @@ public class AccountService {
 
     @Transactional
     GetAccountDto save(PostAccountDto accountDto) {
-        if (accountDto.getType() == AccountType.UNKNOWN) {
-            throw new IllegalAccountCreationException();
-        }
-
         var user = userRepository.findById(accountDto.getUserId());
         if (user.isEmpty()) {
             throw new UserNotFoundException(accountDto.getUserId());

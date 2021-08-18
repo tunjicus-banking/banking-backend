@@ -3,6 +3,9 @@ package com.tunjicus.bank.users;
 import com.tunjicus.bank.users.exceptions.UserNotFoundException;
 import lombok.RequiredArgsConstructor;
 import org.apache.logging.log4j.util.Strings;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.PageRequest;
+import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 
 import java.util.ArrayList;
@@ -27,10 +30,15 @@ public class UserService {
         return userRepository.save(user);
     }
 
-    public List<User> findByName(String name) {
+    public Page<User> findByName(String name, int page, int size) {
+        page = Math.max(page, 0);
+        size = size < 0 ? 20 : size;
+        Pageable paging = PageRequest.of(page, size);
+
         if (name.isEmpty()) {
-            return new ArrayList<>();
+            return Page.empty();
         }
+
         var nameSplit = name.split(" ");
         var firstName = nameSplit[0];
         if (nameSplit.length > 1) {
@@ -39,9 +47,9 @@ public class UserService {
                             Arrays.copyOfRange(nameSplit, 1, nameSplit.length)
                     ),
                     ' ');
-            return (List<User>) userRepository.findUsersByFirstNameContainsAndLastNameContains(firstName, lastname);
+            return userRepository.findUsersByFirstNameContainsAndLastNameContains(firstName, lastname, paging);
         }
 
-        return (List<User>) userRepository.findUsersByFirstNameContains(firstName);
+        return userRepository.findUsersByFirstNameContains(firstName, paging);
     }
 }

@@ -1,9 +1,9 @@
-package com.tunjicus.bank.accounts;
+package com.tunjicus.bank.accounts.enums;
 
 public enum AccountType {
     CHECKING("C"),
     SAVINGS("S"),
-    UNKNOWN("U");
+    BRAND("B");
 
     public final String label;
 

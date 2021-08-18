@@ -6,8 +6,8 @@ go
 
 create table checking_accounts
 (
-    account_id       int        not null,
-    type             varchar(1) not null,
+    account_id       int         not null,
+    type             nvarchar(1) not null,
     maintenance_fees money default 3.00,
 
     constraint PK_checking_accounts primary key (account_id, type),

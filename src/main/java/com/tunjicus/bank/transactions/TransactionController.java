@@ -16,7 +16,7 @@ import org.springframework.web.bind.annotation.*;
 import javax.validation.Valid;
 
 @RestController
-@RequestMapping("/transaction")
+@RequestMapping(value = "/transaction", produces = MediaType.APPLICATION_JSON_VALUE)
 @RequiredArgsConstructor
 @Tag(name = "Transactions", description = "Defines a transaction between two users")
 public class TransactionController {
@@ -27,22 +27,12 @@ public class TransactionController {
             description =
                     "Makes sure that each user exists, the sending user has the funds, and that both users have checking accounts",
             responses = {
-                @ApiResponse(
-                        responseCode = "201",
-                        description = "The transaction was successful",
-                        content =
-                                @Content(
-                                        mediaType = MediaType.APPLICATION_JSON_VALUE,
-                                        schema =
-                                                @Schema(implementation = GetTransactionDto.class))),
+                @ApiResponse(responseCode = "201", description = "The transaction was successful"),
                 @ApiResponse(
                         responseCode = "400",
                         description =
                                 "The request failed for some reason, i.e. the sending user didn't have the funds",
-                        content =
-                                @Content(
-                                        mediaType = MediaType.APPLICATION_JSON_VALUE,
-                                        schema = @Schema(implementation = ErrorResponse.class)))
+                        content = @Content(schema = @Schema(implementation = ErrorResponse.class)))
             })
     @PostMapping
     @ResponseStatus(HttpStatus.CREATED)
