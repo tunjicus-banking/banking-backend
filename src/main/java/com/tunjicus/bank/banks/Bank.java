@@ -4,6 +4,7 @@ import com.fasterxml.jackson.annotation.JsonProperty;
 import lombok.Getter;
 import lombok.Setter;
 import lombok.ToString;
+import org.hibernate.annotations.Nationalized;
 import org.springframework.format.annotation.NumberFormat;
 
 import javax.persistence.*;
@@ -26,10 +27,12 @@ public class Bank {
 
     @Column
     @NotBlank(message = "name cannot be empty")
+    @Nationalized
     private String name;
 
     @Column
     @NotBlank(message = "location cannot be empty")
+    @Nationalized
     private String location;
 
     @Column

@@ -3,6 +3,7 @@ package com.tunjicus.bank.accounts.models;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
+import org.hibernate.annotations.Nationalized;
 
 import javax.persistence.Column;
 import javax.persistence.Entity;
@@ -22,6 +23,7 @@ public class CheckingAccount {
 
     @Id
     @Column
+    @Nationalized
     private String type = "C";
 
     @Column

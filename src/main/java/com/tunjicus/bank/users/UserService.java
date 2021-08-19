@@ -52,4 +52,13 @@ public class UserService {
 
         return userRepository.findUsersByFirstNameContains(firstName, paging);
     }
+
+    public User update(User user, int id) {
+        if (!userRepository.existsById(id)) {
+            throw new UserNotFoundException(id);
+        }
+
+        user.setId(id);
+        return userRepository.save(user);
+    }
 }

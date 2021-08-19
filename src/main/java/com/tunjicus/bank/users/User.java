@@ -4,6 +4,7 @@ import com.fasterxml.jackson.annotation.JsonProperty;
 import lombok.Getter;
 import lombok.Setter;
 import lombok.ToString;
+import org.hibernate.annotations.Nationalized;
 
 import javax.persistence.*;
 import javax.validation.constraints.Email;
@@ -21,13 +22,16 @@ public class User {
 
     @Column(unique = true)
     @NotBlank(message = "username cannot be blank")
+    @Nationalized
     private String username;
 
     @Column
     @NotBlank(message = "first name cannot be blank")
+    @Nationalized
     private String firstName;
 
     @Column
     @NotBlank(message = "last name cannot be blank")
+    @Nationalized
     private String lastName;
 }

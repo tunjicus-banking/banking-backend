@@ -5,6 +5,7 @@ import com.tunjicus.bank.transactions.dtos.SelfTransferDto;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
+import org.hibernate.annotations.Nationalized;
 
 import javax.persistence.*;
 import java.math.BigDecimal;
@@ -30,12 +31,14 @@ public class Transaction {
     private int fromAccount;
 
     @Column
+    @Nationalized
     private String fromType;
 
     @Column
     private int toAccount;
 
     @Column
+    @Nationalized
     private String toType;
 
     @Column

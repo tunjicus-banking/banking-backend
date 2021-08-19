@@ -34,8 +34,7 @@ public class AccountController {
             })
     @GetMapping("/{id}")
     public GetAccountDto get(
-            @Parameter(required = true, description = "The id of the account") @PathVariable
-                    int id) {
+            @Parameter(description = "The id of the account") @PathVariable int id) {
         return accountService.findById(id);
     }
 
@@ -61,16 +60,15 @@ public class AccountController {
     @Operation(
             summary = "Deletes an account",
             responses = {
-                @ApiResponse(responseCode = "200", description = "The account has been deleted"),
+                @ApiResponse(responseCode = "204", description = "The account has been deleted"),
                 @ApiResponse(
                         responseCode = "404",
                         description = "The account cannot be found",
                         content = @Content(schema = @Schema(implementation = ErrorResponse.class)))
             })
     @DeleteMapping("/{id}")
-    public void delete(
-            @Parameter(required = true, description = "The id of the account") @PathVariable
-                    int id) {
+    @ResponseStatus(HttpStatus.NO_CONTENT)
+    public void delete(@Parameter(description = "The id of the account") @PathVariable int id) {
         accountService.delete(id);
     }
 }

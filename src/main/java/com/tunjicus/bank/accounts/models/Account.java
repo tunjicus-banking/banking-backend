@@ -5,6 +5,7 @@ import com.tunjicus.bank.accounts.enums.AccountType;
 import com.tunjicus.bank.accounts.enums.PostAccountType;
 import lombok.Getter;
 import lombok.Setter;
+import org.hibernate.annotations.Nationalized;
 import org.hibernate.validator.constraints.Length;
 
 import javax.persistence.*;
@@ -33,6 +34,7 @@ public class Account {
     @Column
     @NotBlank
     @Length(min = 1, max = 1)
+    @Nationalized
     private String type;
 
     @Column

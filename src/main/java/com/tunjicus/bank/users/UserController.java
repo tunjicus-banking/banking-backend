@@ -35,9 +35,24 @@ public class UserController {
                         content = @Content(schema = @Schema(implementation = ErrorResponse.class)))
             })
     @GetMapping("/{id}")
-    public User get(
-            @Parameter(required = true, description = "The id of the user") @PathVariable int id) {
+    public User get(@Parameter(description = "The id of the user") @PathVariable int id) {
         return userService.findById(id);
+    }
+
+    @Operation(
+            summary = "Updates a user",
+            responses = {
+                @ApiResponse(responseCode = "200", description = "User has been updated"),
+                @ApiResponse(
+                        responseCode = "404",
+                        description = "User has not been found",
+                        content = @Content(schema = @Schema(implementation = ErrorResponse.class)))
+            })
+    @PutMapping("/{id}")
+    public User update(
+            @Parameter(description = "The id of the user") @PathVariable int id,
+            @Valid @RequestBody User user) {
+        return userService.update(user, id);
     }
 
     @Operation(
@@ -58,8 +73,7 @@ public class UserController {
             })
     @GetMapping("/find")
     public Page<User> getByName(
-            @Parameter(required = true, description = "The name to search for") @RequestParam
-                    String name,
+            @Parameter(description = "The name to search for") @RequestParam String name,
             @Parameter(description = "The page number") @RequestParam(defaultValue = "0") int page,
             @Parameter(description = "The page size") @RequestParam(defaultValue = "20") int size) {
         return userService.findByName(name, page, size);

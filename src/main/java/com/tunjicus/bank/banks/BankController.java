@@ -2,6 +2,7 @@ package com.tunjicus.bank.banks;
 
 import com.tunjicus.bank.shared.ErrorResponse;
 import io.swagger.v3.oas.annotations.Operation;
+import io.swagger.v3.oas.annotations.Parameter;
 import io.swagger.v3.oas.annotations.media.Content;
 import io.swagger.v3.oas.annotations.media.Schema;
 import io.swagger.v3.oas.annotations.responses.ApiResponse;
@@ -39,7 +40,7 @@ public class BankController {
                         content = @Content(schema = @Schema(implementation = ErrorResponse.class)))
             })
     @GetMapping("/{id}")
-    public Bank get(@PathVariable int id) {
+    public Bank get(@Parameter(description = "The id of the bank") @PathVariable int id) {
         return bankService.findById(id);
     }
 
@@ -52,5 +53,21 @@ public class BankController {
     @ResponseStatus(HttpStatus.CREATED)
     public Bank created(@Valid @RequestBody Bank bank) {
         return bankService.save(bank);
+    }
+
+    @Operation(
+            summary = "Updates a bank",
+            responses = {
+                @ApiResponse(responseCode = "200", description = "Update was successful"),
+                @ApiResponse(
+                        responseCode = "404",
+                        description = "Bank was not found",
+                        content = @Content(schema = @Schema(implementation = ErrorResponse.class)))
+            })
+    @PutMapping("/{id}")
+    public Bank update(
+            @Parameter(description = "The id of the bank") @PathVariable int id,
+            @Valid @RequestBody Bank bank) {
+        return bankService.update(bank, id);
     }
 }
