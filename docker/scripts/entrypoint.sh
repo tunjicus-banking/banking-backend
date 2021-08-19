@@ -28,6 +28,7 @@ run_script "create_savings"
 run_script "create_checking"
 run_script "create_transactions"
 run_script "create_companies"
+run_script "create_positions"
 
 # Insert data
 run_script "insert_banks"
