@@ -13,6 +13,8 @@ import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 
+import java.util.Date;
+
 @Service
 @RequiredArgsConstructor
 public class JobPostingService {
@@ -60,9 +62,9 @@ public class JobPostingService {
 
         Page<JobPosting> result;
         if (includeAll) {
-            result = jobPostingRepository.findAllByActiveIsTrue(pageable);
-        } else {
             result = jobPostingRepository.findAll(pageable);
+        } else {
+            result = jobPostingRepository.findAllByActiveIsTrue(pageable);
         }
 
         return result.map(GetJobPostingDto::new);
@@ -73,7 +75,12 @@ public class JobPostingService {
             throw new PositionNotFoundException(dto.getPositionId());
         }
 
+        if (dto.getSalaryHigh().compareTo(dto.getSalaryLow()) < 0) {
+            dto.setSalaryHigh(dto.getSalaryLow());
+        }
+
         var jobPosting = jobPostingRepository.save(new JobPosting(dto));
+        jobPosting.setUpSince(new Date());
         return new GetJobPostingDto(jobPosting);
     }
 
@@ -82,12 +89,22 @@ public class JobPostingService {
             throw new PositionNotFoundException(dto.getPositionId());
         }
 
-        if (!jobPostingRepository.existsById(id)) {
+        var oldPosting = jobPostingRepository.findById(id);
+        if (oldPosting.isEmpty()) {
             throw new JobPostingNotFoundException(id);
+        }
+
+        if (dto.getSalaryHigh().compareTo(dto.getSalaryLow()) < 0) {
+            dto.setSalaryHigh(dto.getSalaryLow());
         }
 
         var jobPosting = new JobPosting(dto);
         jobPosting.setId(id);
+
+        // Make sure upSince time gets updated when activating an existing posting
+        if (!oldPosting.get().isActive() && jobPosting.isActive()) {
+            jobPosting.setUpSince(new Date());
+        }
 
         jobPosting = jobPostingRepository.save(jobPosting);
         return new GetJobPostingDto(jobPosting);

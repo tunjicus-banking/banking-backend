@@ -7,6 +7,7 @@ import lombok.Setter;
 import org.hibernate.annotations.Nationalized;
 
 import javax.persistence.*;
+import java.math.BigDecimal;
 import java.util.Date;
 
 @Entity(name = "job_postings")
@@ -27,6 +28,13 @@ public class JobPosting {
     private String description;
 
     @Column
+    private BigDecimal salaryLow;
+
+    @Column
+    private BigDecimal salaryHigh;
+
+    @Column(insertable = false, updatable = false)
+    @Temporal(TemporalType.TIMESTAMP)
     private Date upSince;
 
     @Column
@@ -35,5 +43,8 @@ public class JobPosting {
     public JobPosting(PostJobPostingDto dto) {
         positionId = dto.getPositionId();
         description = dto.getDescription();
+        salaryLow = dto.getSalaryLow();
+        salaryHigh = dto.getSalaryHigh();
+        active = dto.isActive();
     }
 }
