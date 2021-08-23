@@ -14,7 +14,7 @@ create table transactions
     to_account       int         not null,
     to_type          nvarchar(1) not null,
     amount           money       not null check (amount > 0),
-    transaction_time datetime2 default getdate(),
+    transaction_time datetime2   not null default getdate(),
 
     constraint FK_users_transactions_from_user foreign key (from_user)
         references users (user_id) on delete no action,

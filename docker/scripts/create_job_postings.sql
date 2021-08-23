@@ -11,8 +11,8 @@ create table job_postings
     description    nvarchar(max) not null,
     salary_low     money         not null,
     salary_high    money         not null,
-    up_since       datetime2 default getdate(),
-    active         bit       default 1,
+    up_since       datetime2     not null default getdate(),
+    active         bit           not null default 1,
 
     constraint FK_positions_job_postings foreign key (position_id)
         references positions (position_id),

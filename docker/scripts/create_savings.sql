@@ -8,7 +8,7 @@ create table savings_accounts
 (
     account_id        int           not null,
     type              nvarchar(1)   not null,
-    transaction_limit tinyint default 6,
+    transaction_limit tinyint       not null default 6,
     interest_rate     numeric(5, 5) not null,
 
     constraint CHK_savings_accounts_type check (type = 'S'),

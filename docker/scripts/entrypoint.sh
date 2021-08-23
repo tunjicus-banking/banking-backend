@@ -30,6 +30,8 @@ run_script "create_transactions"
 run_script "create_companies"
 run_script "create_positions"
 run_script "create_job_postings"
+run_script "create_offers"
+run_script "create_employment_history"
 
 # Insert data
 run_script "insert_banks"

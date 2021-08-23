@@ -25,24 +25,26 @@ public class TransactionService {
 
     GetTransactionDto usersTransfer(PostTransactionDto transactionDto) {
         if (transactionDto.getFrom() == transactionDto.getTo()) {
-            throw new SelfTransferException("self transfer via this method is not allowed");
+            throw new SelfTransferException("Self transfer via this method is not allowed");
         }
+
         var fromAccount =
                 accountRepository
                         .findByUserIdEqualsAndFundsGreaterThanEqualAndTypeEqualsAndClosedIsFalse(
                                 transactionDto.getFrom(),
                                 transactionDto.getAmount(),
                                 AccountType.CHECKING.label);
+
         var toAccount =
                 accountRepository.findByUserIdEqualsAndTypeEqualsAndClosedIsFalse(
                         transactionDto.getTo(), AccountType.CHECKING.label);
 
         if (fromAccount.isEmpty()) {
-            throw new InsufficientFundsException("failed to find valid account for sending user");
+            throw new InsufficientFundsException("Failed to find valid account for sending user");
         }
 
         if (toAccount.isEmpty()) {
-            throw new NoCheckingAccountException("failed to find valid account for receiving user");
+            throw new NoCheckingAccountException("Failed to find valid account for receiving user");
         }
 
         return saveTransaction(fromAccount.get(), toAccount.get(), transactionDto);
@@ -53,27 +55,31 @@ public class TransactionService {
             throw new SelfTransferException("Cannot transfer between the same account");
         }
 
-        var from =
-                accountRepository.findByUserIdEqualsAndIdEqualsAndFundsGreaterThanAndClosedIsFalse(
-                        dto.getUserId(), dto.getFrom(), dto.getAmount());
-        var to = accountRepository.findByUserIdEqualsAndIdEqualsAndClosedIsFalse(dto.getUserId(), dto.getTo());
+        var fromAccount =
+                accountRepository
+                        .findByUserIdEqualsAndIdEqualsAndFundsGreaterThanAndClosedIsFalse(
+                                dto.getUserId(), dto.getFrom(), dto.getAmount())
+                        .orElseThrow(
+                                () ->
+                                        new ValidAccountNotFoundException(
+                                                dto.getUserId(), dto.getFrom()));
 
-        if (from.isEmpty()) {
-            throw new ValidAccountNotFoundException(dto.getUserId(), dto.getFrom());
-        }
+        var toAccount =
+                accountRepository
+                        .findByUserIdEqualsAndIdEqualsAndClosedIsFalse(dto.getUserId(), dto.getTo())
+                        .orElseThrow(
+                                () ->
+                                        new ValidAccountNotFoundException(
+                                                dto.getUserId(), dto.getTo()));
 
-        if (to.isEmpty()) {
-            throw new ValidAccountNotFoundException(dto.getUserId(), dto.getTo());
-        }
-
-        var fromAccount = from.get();
-        var toAccount = to.get();
         fromAccount.setFunds(fromAccount.getFunds().subtract(dto.getAmount()));
         toAccount.setFunds(toAccount.getFunds().add(dto.getAmount()));
 
         accountRepository.save(fromAccount);
         accountRepository.save(toAccount);
-        var t = transactionRepository.save(new Transaction(dto, fromAccount.getType(), toAccount.getType()));
+        var t =
+                transactionRepository.save(
+                        new Transaction(dto, fromAccount.getType(), toAccount.getType()));
         t.setTransactionTime(new Date());
 
         return new SelfTransferDto(t);

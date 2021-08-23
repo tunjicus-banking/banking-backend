@@ -14,15 +14,11 @@ import org.springframework.stereotype.Service;
 @RequiredArgsConstructor
 public class PositionService {
     private final PositionRepository positionRepository;
-    private final CompanyRepository companyRepository;
     private final JobPostingRepository jobPostingRepository;
+    private final CompanyRepository companyRepository;
 
     Position findById(int id) {
-        var position = positionRepository.findById(id);
-        if (position.isEmpty()) {
-            throw new PositionNotFoundException(id);
-        }
-        return position.get();
+        return positionRepository.findById(id).orElseThrow(() -> new PositionNotFoundException(id));
     }
 
     private Page<Position> findByCompanyId(int companyId, Pageable pageable) {
@@ -56,12 +52,11 @@ public class PositionService {
     }
 
     void delete(int id) {
-        var oPosition = positionRepository.findById(id);
-        if (oPosition.isEmpty()) {
-            throw new PositionNotFoundException(id);
-        }
+        var position =
+                positionRepository
+                        .findById(id)
+                        .orElseThrow(() -> new PositionNotFoundException(id));
 
-        var position = oPosition.get();
         position.setActive(false);
         positionRepository.save(position);
         jobPostingRepository.deleteAllByPositionId(id);

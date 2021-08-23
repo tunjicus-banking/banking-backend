@@ -2,9 +2,14 @@ package com.tunjicus.bank.jobPostings;
 
 import com.tunjicus.bank.companies.CompanyRepository;
 import com.tunjicus.bank.companies.exceptions.CompanyNotFoundException;
+import com.tunjicus.bank.employmentHistory.EmploymentHistoryRepository;
 import com.tunjicus.bank.jobPostings.dtos.GetJobPostingDto;
 import com.tunjicus.bank.jobPostings.dtos.PostJobPostingDto;
+import com.tunjicus.bank.jobPostings.exceptions.InvalidDuplicateApplicationException;
 import com.tunjicus.bank.jobPostings.exceptions.JobPostingNotFoundException;
+import com.tunjicus.bank.offers.GetOfferDto;
+import com.tunjicus.bank.offers.OfferRepository;
+import com.tunjicus.bank.offers.OfferService;
 import com.tunjicus.bank.positions.PositionRepository;
 import com.tunjicus.bank.positions.exceptions.PositionNotFoundException;
 import lombok.RequiredArgsConstructor;
@@ -19,10 +24,14 @@ import java.util.Date;
 @RequiredArgsConstructor
 public class JobPostingService {
     private final JobPostingRepository jobPostingRepository;
-    private final CompanyRepository companyRepository;
     private final PositionRepository positionRepository;
+    private final CompanyRepository companyRepository;
+    private final OfferRepository offerRepository;
+    private final OfferService offerService;
+    private final EmploymentHistoryRepository employmentHistoryRepository;
 
-    private Page<GetJobPostingDto> findByCompanyId(int companyId, boolean includeAll, Pageable pageable) {
+    private Page<GetJobPostingDto> findByCompanyId(
+            int companyId, boolean includeAll, Pageable pageable) {
         if (!companyRepository.existsById(companyId)) {
             throw new CompanyNotFoundException(companyId);
         }
@@ -37,7 +46,8 @@ public class JobPostingService {
         return result.map(GetJobPostingDto::new);
     }
 
-    private Page<GetJobPostingDto> findByPositionId(int positionId, boolean includeAll, Pageable pageable) {
+    private Page<GetJobPostingDto> findByPositionId(
+            int positionId, boolean includeAll, Pageable pageable) {
         if (!positionRepository.existsById(positionId)) {
             throw new PositionNotFoundException(positionId);
         }
@@ -52,7 +62,8 @@ public class JobPostingService {
         return result.map(GetJobPostingDto::new);
     }
 
-    Page<GetJobPostingDto> findAll(int companyId, int positionId, boolean includeAll, int page, int size) {
+    Page<GetJobPostingDto> findAll(
+            int companyId, int positionId, boolean includeAll, int page, int size) {
         page = Math.max(page, 0);
         size = size < 0 ? 20 : size;
         var pageable = PageRequest.of(page, size);
@@ -89,10 +100,10 @@ public class JobPostingService {
             throw new PositionNotFoundException(dto.getPositionId());
         }
 
-        var oldPosting = jobPostingRepository.findById(id);
-        if (oldPosting.isEmpty()) {
-            throw new JobPostingNotFoundException(id);
-        }
+        var oldPosting =
+                jobPostingRepository
+                        .findById(id)
+                        .orElseThrow(() -> new JobPostingNotFoundException(id));
 
         if (dto.getSalaryHigh().compareTo(dto.getSalaryLow()) < 0) {
             dto.setSalaryHigh(dto.getSalaryLow());
@@ -102,7 +113,7 @@ public class JobPostingService {
         jobPosting.setId(id);
 
         // Make sure upSince time gets updated when activating an existing posting
-        if (!oldPosting.get().isActive() && jobPosting.isActive()) {
+        if (!oldPosting.isActive() && jobPosting.isActive()) {
             jobPosting.setUpSince(new Date());
         }
 
@@ -110,13 +121,13 @@ public class JobPostingService {
         return new GetJobPostingDto(jobPosting);
     }
 
-    GetJobPostingDto findById(int id) {
-        var jobPosting = jobPostingRepository.findById(id);
-        if (jobPosting.isEmpty()) {
-            throw new JobPostingNotFoundException(id);
-        }
+    public GetJobPostingDto findById(int id) {
+        var jobPosting =
+                jobPostingRepository
+                        .findById(id)
+                        .orElseThrow(() -> new JobPostingNotFoundException(id));
 
-        return new GetJobPostingDto(jobPosting.get());
+        return new GetJobPostingDto(jobPosting);
     }
 
     void delete(int id) {
@@ -125,5 +136,39 @@ public class JobPostingService {
         }
 
         jobPostingRepository.deleteById(id);
+    }
+
+    void activate(int id) {
+        updateActive(id, true);
+    }
+
+    void deactivate(int id) {
+        updateActive(id, false);
+    }
+
+    GetOfferDto apply(int jobPostingId, int userId) {
+        if (offerRepository.existsByUserIdAndJobPostingIdAndAccepted(
+                userId, jobPostingId, (short) 0)) {
+            throw new InvalidDuplicateApplicationException();
+        }
+        var posting =
+                jobPostingRepository
+                        .findById(jobPostingId)
+                        .orElseThrow(() -> new JobPostingNotFoundException(jobPostingId));
+
+        if (employmentHistoryRepository.existsByUserIdAndPositionIdAndEndDateNull(
+                userId, posting.getPositionId())) {
+            throw new InvalidDuplicateApplicationException();
+        }
+        return offerService.create(posting, userId);
+    }
+
+    private void updateActive(int id, boolean active) {
+        var jobPosting =
+                jobPostingRepository
+                        .findById(id)
+                        .orElseThrow(() -> new JobPostingNotFoundException(id));
+        jobPosting.setActive(active);
+        jobPostingRepository.save(jobPosting);
     }
 }

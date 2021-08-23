@@ -2,6 +2,7 @@ package com.tunjicus.bank.jobPostings;
 
 import com.tunjicus.bank.jobPostings.dtos.GetJobPostingDto;
 import com.tunjicus.bank.jobPostings.dtos.PostJobPostingDto;
+import com.tunjicus.bank.offers.GetOfferDto;
 import com.tunjicus.bank.shared.ErrorResponse;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.Parameter;
@@ -50,12 +51,12 @@ public class JobPostingController {
             })
     @GetMapping
     public Page<GetJobPostingDto> getAll(
-            @Parameter(description = "The id of the company to filter by. This takes precedence over the position id if set")
-                    @RequestParam(defaultValue = "-1")
-                    int companyId,
             @Parameter(
                             description =
-                                    "The id of the position to filter by")
+                                    "The id of the company to filter by. This takes precedence over the position id if set")
+                    @RequestParam(defaultValue = "-1")
+                    int companyId,
+            @Parameter(description = "The id of the position to filter by")
                     @RequestParam(defaultValue = "-1")
                     int positionId,
             @Parameter(
@@ -114,5 +115,62 @@ public class JobPostingController {
     public void delete(
             @Parameter(description = "The id of the posting to delete") @PathVariable int id) {
         jobPostingService.delete(id);
+    }
+
+    @Operation(
+            summary = "Activates a job posting",
+            responses = {
+                @ApiResponse(responseCode = "204", description = "The posting was activated"),
+                @ApiResponse(
+                        responseCode = "404",
+                        description = "A posting with the id could not be found",
+                        content = @Content(schema = @Schema(implementation = ErrorResponse.class)))
+            })
+    @PatchMapping("/activate/{id}")
+    @ResponseStatus(HttpStatus.NO_CONTENT)
+    public void activate(
+            @Parameter(description = "The job posting to activate") @PathVariable int id) {
+        jobPostingService.activate(id);
+    }
+
+    @Operation(
+            summary = "Deactivates a job posting",
+            responses = {
+                @ApiResponse(responseCode = "204", description = "The posting was deactivated"),
+                @ApiResponse(
+                        responseCode = "400",
+                        description = "The user is a company",
+                        content = @Content(schema = @Schema(implementation = ErrorResponse.class))),
+                @ApiResponse(
+                        responseCode = "404",
+                        description = "A posting with the id could not be found",
+                        content = @Content(schema = @Schema(implementation = ErrorResponse.class)))
+            })
+    @PatchMapping("/deactivate/{id}")
+    @ResponseStatus(HttpStatus.NO_CONTENT)
+    public void deactivate(
+            @Parameter(description = "The job posting to deactivate") @PathVariable int id) {
+        jobPostingService.deactivate(id);
+    }
+
+    @Operation(
+            summary = "Apply for a job",
+            responses = {
+                @ApiResponse(responseCode = "201", description = "Application response generated"),
+                @ApiResponse(
+                        responseCode = "400",
+                        description = "Application to posting with open offer or application for a position the user currently holds",
+                        content = @Content(schema = @Schema(implementation = ErrorResponse.class))),
+                @ApiResponse(
+                        responseCode = "404",
+                        description = "User or job posting not found",
+                        content = @Content(schema = @Schema(implementation = ErrorResponse.class)))
+            })
+    @PostMapping("/apply/{id}")
+    @ResponseStatus(HttpStatus.CREATED)
+    public GetOfferDto apply(
+            @Parameter(description = "The job posting to apply to") @PathVariable int id,
+            @Parameter(description = "The user id (temporary)") @RequestParam int userId) {
+        return jobPostingService.apply(id, userId);
     }
 }
