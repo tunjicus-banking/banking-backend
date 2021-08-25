@@ -15,7 +15,7 @@ create table job_postings
     active         bit           not null default 1,
 
     constraint FK_positions_job_postings foreign key (position_id)
-        references positions (position_id),
+        references positions (position_id) on delete cascade,
     constraint CHK_job_postings_salary_range check
         (salary_high >= job_postings.salary_low and salary_high > 0)
 )

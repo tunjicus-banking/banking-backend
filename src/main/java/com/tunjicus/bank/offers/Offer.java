@@ -34,9 +34,10 @@ public class Offer {
     @Temporal(TemporalType.TIMESTAMP)
     private Date offerTime;
 
-    public Offer(int jobPostingId, int userId, BigDecimal salary) {
+    public Offer(int jobPostingId, int userId, BigDecimal salary, OfferStatus status) {
         this.jobPostingId = jobPostingId;
         this.userId = userId;
         this.salary = salary;
+        accepted = status.status;
     }
 }

@@ -14,6 +14,6 @@ create table companies
 
     constraint PK_companies primary key (company_id),
     constraint FK_users_companies foreign key (company_id)
-        references users (user_id)
+        references users (user_id) on delete cascade
 )
 go

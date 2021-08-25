@@ -14,8 +14,8 @@ create table employment_history
     end_date              datetime2          default null,
 
     constraint FK_users_employment_history foreign key (user_id)
-        references users (user_id),
+        references users (user_id) on delete cascade,
     constraint FK_positions_employment_history foreign key (position_id)
-        references positions (position_id)
+        references positions (position_id) on delete cascade
 )
 go

@@ -11,6 +11,8 @@ import io.swagger.v3.oas.annotations.media.Schema;
 import io.swagger.v3.oas.annotations.responses.ApiResponse;
 import io.swagger.v3.oas.annotations.tags.Tag;
 import lombok.RequiredArgsConstructor;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.data.domain.Page;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
@@ -24,6 +26,8 @@ import javax.validation.Valid;
 @Tag(name = "Job Postings", description = "Represents a job posting for a position")
 public class JobPostingController {
     private final JobPostingService jobPostingService;
+
+    Logger logger = LoggerFactory.getLogger(JobPostingController.class);
 
     @Operation(
             summary = "Gets a job posting by id",
@@ -171,6 +175,7 @@ public class JobPostingController {
     public GetOfferDto apply(
             @Parameter(description = "The job posting to apply to") @PathVariable int id,
             @Parameter(description = "The user id (temporary)") @RequestParam int userId) {
+        logger.info("apply");
         return jobPostingService.apply(id, userId);
     }
 }
