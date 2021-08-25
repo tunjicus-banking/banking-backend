@@ -23,7 +23,7 @@ public class PositionController {
     private final PositionService positionService;
 
     @Operation(
-            summary = "Gets the positions by the company id (paginated)",
+            summary = "Gets the positions (paginated)",
             responses = {
                 @ApiResponse(responseCode = "200", description = "Successful response"),
                 @ApiResponse(
@@ -32,11 +32,15 @@ public class PositionController {
                         content = @Content(schema = @Schema(implementation = ErrorResponse.class)))
             })
     @GetMapping
-    public Page<Position> getByCompanyId(
-            @Parameter(description = "The company id to find positions for") @RequestParam int id,
+    public Page<Position> getAll(
+            @Parameter(
+                            description =
+                                    "The company id to find positions for. Leave blank or set to negative number to find all")
+                    @RequestParam(defaultValue = "-1")
+                    int companyId,
             @Parameter(description = "The page number") @RequestParam(defaultValue = "0") int page,
             @Parameter(description = "The page size") @RequestParam(defaultValue = "20") int size) {
-        return positionService.findByCompanyId(id, page, size);
+        return positionService.findAll(companyId, page, size);
     }
 
     @Operation(

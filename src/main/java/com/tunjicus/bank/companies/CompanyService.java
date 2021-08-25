@@ -16,17 +16,13 @@ public class CompanyService {
         page = Math.max(page, 0);
         size = size < 0 ? 20 : size;
 
-        return companyRepository
-                .findAll(PageRequest.of(page, size))
-                .map(GetCompanyDto::new);
+        return companyRepository.findAll(PageRequest.of(page, size)).map(GetCompanyDto::new);
     }
 
     GetCompanyDto findById(int id) {
-        var company = companyRepository.findById(id);
-        if (company.isEmpty()) {
-            throw new CompanyNotFoundException(id);
-        }
+        var company =
+                companyRepository.findById(id).orElseThrow(() -> new CompanyNotFoundException(id));
 
-        return new GetCompanyDto(company.get());
+        return new GetCompanyDto(company);
     }
 }

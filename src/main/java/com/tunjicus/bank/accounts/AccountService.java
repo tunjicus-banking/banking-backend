@@ -2,9 +2,7 @@ package com.tunjicus.bank.accounts;
 
 import com.tunjicus.bank.accounts.dtos.GetAccountDto;
 import com.tunjicus.bank.accounts.dtos.PostAccountDto;
-import com.tunjicus.bank.accounts.enums.AccountType;
 import com.tunjicus.bank.accounts.exceptions.AccountNotFoundException;
-import com.tunjicus.bank.accounts.exceptions.IllegalAccountCreationException;
 import com.tunjicus.bank.accounts.models.Account;
 import com.tunjicus.bank.accounts.models.CheckingAccount;
 import com.tunjicus.bank.accounts.models.SavingsAccount;
@@ -25,25 +23,21 @@ import java.util.Date;
 @RequiredArgsConstructor
 public class AccountService {
     private final AccountRepository accountRepository;
-    private final UserRepository userRepository;
     private final CheckingRepository checkingRepository;
     private final SavingsRepository savingsRepository;
+    private final UserRepository userRepository;
 
     Logger logger = LoggerFactory.getLogger(AccountService.class);
 
     GetAccountDto findById(int id) {
-        var account = accountRepository.findByIdAndClosedIsFalse(id);
-        if (account.isEmpty()) {
-            throw new AccountNotFoundException(id);
-        }
+        var account = accountRepository.findByIdAndClosedIsFalse(id).orElseThrow(() -> new AccountNotFoundException(id));
 
-        return new GetAccountDto(account.get());
+        return new GetAccountDto(account);
     }
 
     @Transactional
-    GetAccountDto save(PostAccountDto accountDto) {
-        var user = userRepository.findById(accountDto.getUserId());
-        if (user.isEmpty()) {
+    public GetAccountDto save(PostAccountDto accountDto) {
+        if (!userRepository.existsById(accountDto.getUserId())) {
             throw new UserNotFoundException(accountDto.getUserId());
         }
 
@@ -54,12 +48,7 @@ public class AccountService {
     }
 
     void delete(int id) {
-        var oAccount = accountRepository.findByIdAndClosedIsFalse(id);
-        if (oAccount.isEmpty()) {
-            throw new AccountNotFoundException(id);
-        }
-
-        var account = oAccount.get();
+        var account = accountRepository.findByIdAndClosedIsFalse(id).orElseThrow(() -> new AccountNotFoundException(id));
         account.setClosed(true);
         accountRepository.save(account);
     }

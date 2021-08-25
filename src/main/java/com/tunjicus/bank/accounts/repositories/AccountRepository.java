@@ -1,6 +1,7 @@
 package com.tunjicus.bank.accounts.repositories;
 
 import com.tunjicus.bank.accounts.models.Account;
+import org.springframework.data.jpa.repository.Query;
 import org.springframework.data.repository.CrudRepository;
 
 import java.math.BigDecimal;
@@ -12,4 +13,7 @@ public interface AccountRepository extends CrudRepository<Account, Integer> {
     Optional<Account> findByUserIdEqualsAndIdEqualsAndFundsGreaterThanAndClosedIsFalse(int userId, int accountId, BigDecimal amount);
     Optional<Account> findByUserIdEqualsAndIdEqualsAndClosedIsFalse(int userId, int accountId);
     Optional<Account> findByIdAndClosedIsFalse(int id);
+
+    @Query("select sum(funds) from accounts where userId = ?1 and closed = false")
+    Optional<BigDecimal> getNetWorth(int userId);
 }

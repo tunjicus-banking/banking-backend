@@ -4,7 +4,6 @@ import com.tunjicus.bank.banks.exceptions.BankNotFoundException;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 
-import java.util.ArrayList;
 import java.util.List;
 
 @Service
@@ -17,11 +16,7 @@ public class BankService {
     }
 
     Bank findById(int id) {
-        var bank = bankRepository.findById(id);
-        if (bank.isEmpty()) {
-            throw new BankNotFoundException(id);
-        }
-        return bank.get();
+        return bankRepository.findById(id).orElseThrow(() -> new BankNotFoundException(id));
     }
 
     Bank save(Bank bank) {

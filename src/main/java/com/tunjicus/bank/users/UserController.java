@@ -1,5 +1,6 @@
 package com.tunjicus.bank.users;
 
+import com.tunjicus.bank.employmentHistory.GetEmploymentHistoryDto;
 import com.tunjicus.bank.shared.ErrorResponse;
 import com.tunjicus.bank.transactions.TransactionService;
 import com.tunjicus.bank.transactions.dtos.SelfTransferDto;
@@ -85,12 +86,30 @@ public class UserController {
                 @ApiResponse(responseCode = "201", description = "Transfer was successful"),
                 @ApiResponse(
                         responseCode = "400",
-                        description = "Failed to valid accounts for the user",
+                        description = "Failed to validate accounts for the user",
                         content = @Content(schema = @Schema(implementation = ErrorResponse.class)))
             })
     @PostMapping("/transfer")
     @ResponseStatus(HttpStatus.CREATED)
     public SelfTransferDto transfer(@Valid @RequestBody SelfTransferDto dto) {
         return transactionService.selfTransfer(dto);
+    }
+
+
+    @Operation(
+            summary = "Gets a user's employment history",
+            responses = {
+                    @ApiResponse(responseCode = "200", description = "Success"),
+                    @ApiResponse(
+                            responseCode = "404",
+                            description = "Failed to find user",
+                            content = @Content(schema = @Schema(implementation = ErrorResponse.class)))
+            })
+    @GetMapping("employment/{id}")
+    public Page<GetEmploymentHistoryDto> getEmploymentHistory(
+            @Parameter(description = "The id of the user") @PathVariable int id,
+            @Parameter(description = "The page number") @RequestParam(defaultValue = "0") int page,
+            @Parameter(description = "The page size") @RequestParam(defaultValue = "20") int size) {
+        return userService.getEmploymentHistory(id, page, size);
     }
 }
