@@ -70,9 +70,8 @@ public class OfferController {
     @PatchMapping("/accept/{id}")
     @ResponseStatus(HttpStatus.NO_CONTENT)
     public void accept(
-            @Parameter(description = "The id of the offer") @PathVariable long id,
-            @Parameter(description = "The id of the user (temporary)") @RequestParam int userId) {
-        offerService.acceptOffer(id, userId);
+            @Parameter(description = "The id of the offer") @PathVariable long id) {
+        offerService.acceptOffer(id);
     }
 
     @Operation(
@@ -99,8 +98,7 @@ public class OfferController {
     @PatchMapping("/reject/{id}")
     @ResponseStatus(HttpStatus.NO_CONTENT)
     public void reject(
-            @Parameter(description = "The id of the offer") @PathVariable long id,
-            @Parameter(description = "The id of the user (temporary)") @RequestParam int userId) {
-        offerService.rejectOffer(id, userId);
+            @Parameter(description = "The id of the offer") @PathVariable long id) {
+        offerService.rejectOffer(id);
     }
 }

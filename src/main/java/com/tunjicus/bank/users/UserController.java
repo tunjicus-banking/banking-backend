@@ -139,9 +139,8 @@ public class UserController {
             })
     @GetMapping("employment/{id}")
     public Page<GetEmploymentHistoryDto> getEmploymentHistory(
-            @Parameter(description = "The id of the user") @PathVariable int id,
             @Parameter(description = "The page number") @RequestParam(defaultValue = "0") int page,
             @Parameter(description = "The page size") @RequestParam(defaultValue = "20") int size) {
-        return userService.getEmploymentHistory(id, page, size);
+        return userService.getEmploymentHistory(page, size);
     }
 }

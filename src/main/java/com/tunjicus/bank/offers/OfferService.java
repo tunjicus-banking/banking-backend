@@ -1,6 +1,7 @@
 package com.tunjicus.bank.offers;
 
 import com.tunjicus.bank.accounts.repositories.AccountRepository;
+import com.tunjicus.bank.auth.AuthService;
 import com.tunjicus.bank.companies.CompanyRepository;
 import com.tunjicus.bank.employmentHistory.EmploymentHistory;
 import com.tunjicus.bank.employmentHistory.EmploymentHistoryRepository;
@@ -43,11 +44,14 @@ public class OfferService {
     private final EmploymentHistoryRepository employmentHistoryRepository;
     private final AccountRepository accountRepository;
     private final RequirementRepository requirementRepository;
+    private final AuthService authService;
 
     Logger logger = LoggerFactory.getLogger(OfferService.class);
 
-    public void acceptOffer(long offerId, int userId) {
+    public void acceptOffer(long offerId) {
+        var userId = authService.getCurrentUser().getId();
         var offer = validatePreUpdate(offerId, userId);
+
         offer.setAccepted((short) 1);
         offerRepository.save(offer);
 
@@ -70,7 +74,8 @@ public class OfferService {
                 new EmploymentHistory(userId, posting.getPositionId(), offer.getSalary()));
     }
 
-    void rejectOffer(long offerId, int userId) {
+    void rejectOffer(long offerId) {
+        var userId = authService.getCurrentUser().getId();
         var offer = validatePreUpdate(offerId, userId);
         offer.setAccepted((short) -1);
         offerRepository.save(offer);

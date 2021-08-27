@@ -17,6 +17,7 @@ import com.tunjicus.bank.transactions.exceptions.InsufficientFundsException;
 import com.tunjicus.bank.transactions.exceptions.NoCheckingAccountException;
 import com.tunjicus.bank.transactions.exceptions.SelfTransferException;
 import com.tunjicus.bank.transactions.exceptions.TransactionException;
+import com.tunjicus.bank.users.exceptions.UnauthorizedUserException;
 import com.tunjicus.bank.users.exceptions.UserNotFoundException;
 import com.tunjicus.bank.users.exceptions.UserValidationException;
 import lombok.RequiredArgsConstructor;
@@ -46,7 +47,7 @@ public class GlobalExceptionHandler {
         return handleExceptions(HttpStatus.NOT_FOUND, e);
     }
 
-    @ExceptionHandler(InvalidOfferUserException.class)
+    @ExceptionHandler({InvalidOfferUserException.class, UnauthorizedUserException.class})
     public ResponseEntity<ErrorResponse> handleForbidden(Exception e) {
         return handleExceptions(HttpStatus.FORBIDDEN, e);
     }

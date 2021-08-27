@@ -1,5 +1,6 @@
 package com.tunjicus.bank.users;
 
+import com.tunjicus.bank.auth.AuthService;
 import com.tunjicus.bank.auth.dtos.RegisterDto;
 import com.tunjicus.bank.employmentHistory.EmploymentHistoryRepository;
 import com.tunjicus.bank.employmentHistory.GetEmploymentHistoryDto;
@@ -33,13 +34,12 @@ public class UserService {
     private final UserRepository userRepository;
     private final EmploymentHistoryRepository employmentHistoryRepository;
     private final RolesRepository rolesRepository;
+    private final AuthService authService;
     private final PasswordEncoder passwordEncoder;
 
     Logger logger = LoggerFactory.getLogger(UserService.class);
 
     GetUserDto findById(int id) {
-        Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
-        logger.info(authentication.getName());
         return new GetUserDto(
                 userRepository.findById(id).orElseThrow(() -> new UserNotFoundException(id)));
     }
@@ -111,16 +111,16 @@ public class UserService {
         return new GetUserDto(userRepository.save(foundUser));
     }
 
-    Page<GetEmploymentHistoryDto> getEmploymentHistory(int userId, int page, int size) {
+    Page<GetEmploymentHistoryDto> getEmploymentHistory(int page, int size) {
         page = Math.max(page, 0);
         size = size < 0 ? 20 : size;
+
+        var userId = authService.getCurrentUser().getId();
         var pageable = PageRequest.of(page, size, Sort.by("hireDate").descending());
 
         if (!userRepository.existsById(userId)) {
             throw new UserNotFoundException(userId);
         }
-
-        //  TODO: Make sure userId matches up with current user
 
         return employmentHistoryRepository
                 .findAllByUserId(userId, pageable)
