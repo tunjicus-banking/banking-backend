@@ -25,6 +25,14 @@ public class OfferController {
             responses = {
                 @ApiResponse(responseCode = "200", description = "Result returned"),
                 @ApiResponse(
+                        responseCode = "401",
+                        description = "You need to be logged in to perform this action",
+                        content = @Content(schema = @Schema(implementation = ErrorResponse.class))),
+                @ApiResponse(
+                        responseCode = "403",
+                        description = "You don't have permission to perform this action",
+                        content = @Content(schema = @Schema(implementation = ErrorResponse.class))),
+                @ApiResponse(
                         responseCode = "404",
                         description = "User with id not found",
                         content = @Content(schema = @Schema(implementation = ErrorResponse.class)))
@@ -47,8 +55,12 @@ public class OfferController {
                         description = "The offer has already been responded to",
                         content = @Content(schema = @Schema(implementation = ErrorResponse.class))),
                 @ApiResponse(
+                        responseCode = "401",
+                        description = "You need to be logged in to perform this action",
+                        content = @Content(schema = @Schema(implementation = ErrorResponse.class))),
+                @ApiResponse(
                         responseCode = "403",
-                        description = "This user cannot modify this offer",
+                        description = "You don't have permission to perform this action",
                         content = @Content(schema = @Schema(implementation = ErrorResponse.class))),
                 @ApiResponse(
                         responseCode = "404",
@@ -64,22 +76,25 @@ public class OfferController {
     }
 
     @Operation(
-            summary =
-                    "Rejects an offer",
+            summary = "Rejects an offer",
             responses = {
-                    @ApiResponse(responseCode = "204", description = "Offer rejected"),
-                    @ApiResponse(
-                            responseCode = "400",
-                            description = "The offer has already been responded to",
-                            content = @Content(schema = @Schema(implementation = ErrorResponse.class))),
-                    @ApiResponse(
-                            responseCode = "403",
-                            description = "This user cannot modify this offer",
-                            content = @Content(schema = @Schema(implementation = ErrorResponse.class))),
-                    @ApiResponse(
-                            responseCode = "404",
-                            description = "An offer with this id was not found",
-                            content = @Content(schema = @Schema(implementation = ErrorResponse.class)))
+                @ApiResponse(responseCode = "204", description = "Offer rejected"),
+                @ApiResponse(
+                        responseCode = "400",
+                        description = "The offer has already been responded to",
+                        content = @Content(schema = @Schema(implementation = ErrorResponse.class))),
+                @ApiResponse(
+                        responseCode = "401",
+                        description = "You need to be logged in to perform this action",
+                        content = @Content(schema = @Schema(implementation = ErrorResponse.class))),
+                @ApiResponse(
+                        responseCode = "403",
+                        description = "This user cannot modify this offer",
+                        content = @Content(schema = @Schema(implementation = ErrorResponse.class))),
+                @ApiResponse(
+                        responseCode = "404",
+                        description = "An offer with this id was not found",
+                        content = @Content(schema = @Schema(implementation = ErrorResponse.class)))
             })
     @PatchMapping("/reject/{id}")
     @ResponseStatus(HttpStatus.NO_CONTENT)

@@ -1,5 +1,5 @@
 package com.tunjicus.bank.shared;
 
-import org.springframework.http.HttpStatus;
+import java.util.Date;
 
-public record ErrorResponse(HttpStatus code, String message) {}
+public record ErrorResponse(Date timestamp, int status, String error, String message, String path) {}

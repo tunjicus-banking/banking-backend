@@ -27,6 +27,14 @@ public class PositionController {
             responses = {
                 @ApiResponse(responseCode = "200", description = "Successful response"),
                 @ApiResponse(
+                        responseCode = "401",
+                        description = "You need to be logged in to perform this action",
+                        content = @Content(schema = @Schema(implementation = ErrorResponse.class))),
+                @ApiResponse(
+                        responseCode = "403",
+                        description = "You don't have permission to perform this action",
+                        content = @Content(schema = @Schema(implementation = ErrorResponse.class))),
+                @ApiResponse(
                         responseCode = "404",
                         description = "Company not found",
                         content = @Content(schema = @Schema(implementation = ErrorResponse.class)))
@@ -48,6 +56,14 @@ public class PositionController {
             responses = {
                 @ApiResponse(responseCode = "200", description = "Successful response"),
                 @ApiResponse(
+                        responseCode = "401",
+                        description = "You need to be logged in to perform this action",
+                        content = @Content(schema = @Schema(implementation = ErrorResponse.class))),
+                @ApiResponse(
+                        responseCode = "403",
+                        description = "You don't have permission to perform this action",
+                        content = @Content(schema = @Schema(implementation = ErrorResponse.class))),
+                @ApiResponse(
                         responseCode = "404",
                         description = "Position not found",
                         content = @Content(schema = @Schema(implementation = ErrorResponse.class)))
@@ -61,6 +77,14 @@ public class PositionController {
             summary = "Creates a position",
             responses = {
                 @ApiResponse(responseCode = "201", description = "Position created"),
+                @ApiResponse(
+                        responseCode = "401",
+                        description = "You need to be logged in to perform this action",
+                        content = @Content(schema = @Schema(implementation = ErrorResponse.class))),
+                @ApiResponse(
+                        responseCode = "403",
+                        description = "You don't have permission to perform this action",
+                        content = @Content(schema = @Schema(implementation = ErrorResponse.class))),
                 @ApiResponse(
                         responseCode = "404",
                         description = "Position not found",
@@ -77,6 +101,14 @@ public class PositionController {
             responses = {
                 @ApiResponse(responseCode = "200", description = "Position updated"),
                 @ApiResponse(
+                        responseCode = "401",
+                        description = "You need to be logged in to perform this action",
+                        content = @Content(schema = @Schema(implementation = ErrorResponse.class))),
+                @ApiResponse(
+                        responseCode = "403",
+                        description = "You don't have permission to perform this action",
+                        content = @Content(schema = @Schema(implementation = ErrorResponse.class))),
+                @ApiResponse(
                         responseCode = "404",
                         description = "Position not found",
                         content = @Content(schema = @Schema(implementation = ErrorResponse.class)))
@@ -92,6 +124,14 @@ public class PositionController {
             summary = "Deletes a position",
             responses = {
                 @ApiResponse(responseCode = "204", description = "Position deleted"),
+                @ApiResponse(
+                        responseCode = "401",
+                        description = "You need to be logged in to perform this action",
+                        content = @Content(schema = @Schema(implementation = ErrorResponse.class))),
+                @ApiResponse(
+                        responseCode = "403",
+                        description = "You don't have permission to perform this action",
+                        content = @Content(schema = @Schema(implementation = ErrorResponse.class))),
                 @ApiResponse(
                         responseCode = "404",
                         description = "Position not found",

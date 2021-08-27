@@ -4,6 +4,8 @@ import com.tunjicus.bank.employmentHistory.GetEmploymentHistoryDto;
 import com.tunjicus.bank.shared.ErrorResponse;
 import com.tunjicus.bank.transactions.TransactionService;
 import com.tunjicus.bank.transactions.dtos.SelfTransferDto;
+import com.tunjicus.bank.users.dtos.GetUserDto;
+import com.tunjicus.bank.users.dtos.UpdateUserDto;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.Parameter;
 import io.swagger.v3.oas.annotations.media.Content;
@@ -31,12 +33,20 @@ public class UserController {
             responses = {
                 @ApiResponse(responseCode = "200", description = "User has been found"),
                 @ApiResponse(
+                        responseCode = "401",
+                        description = "You need to be logged in to perform this action",
+                        content = @Content(schema = @Schema(implementation = ErrorResponse.class))),
+                @ApiResponse(
+                        responseCode = "403",
+                        description = "You don't have permission to perform this action",
+                        content = @Content(schema = @Schema(implementation = ErrorResponse.class))),
+                @ApiResponse(
                         responseCode = "404",
                         description = "User has not been found",
                         content = @Content(schema = @Schema(implementation = ErrorResponse.class)))
             })
     @GetMapping("/{id}")
-    public User get(@Parameter(description = "The id of the user") @PathVariable int id) {
+    public GetUserDto get(@Parameter(description = "The id of the user") @PathVariable int id) {
         return userService.findById(id);
     }
 
@@ -45,24 +55,23 @@ public class UserController {
             responses = {
                 @ApiResponse(responseCode = "200", description = "User has been updated"),
                 @ApiResponse(
+                        responseCode = "401",
+                        description = "You need to be logged in to perform this action",
+                        content = @Content(schema = @Schema(implementation = ErrorResponse.class))),
+                @ApiResponse(
+                        responseCode = "403",
+                        description = "You don't have permission to perform this action",
+                        content = @Content(schema = @Schema(implementation = ErrorResponse.class))),
+                @ApiResponse(
                         responseCode = "404",
                         description = "User has not been found",
                         content = @Content(schema = @Schema(implementation = ErrorResponse.class)))
             })
     @PutMapping("/{id}")
-    public User update(
+    public GetUserDto update(
             @Parameter(description = "The id of the user") @PathVariable int id,
-            @Valid @RequestBody User user) {
+            @Valid @RequestBody UpdateUserDto user) {
         return userService.update(user, id);
-    }
-
-    @Operation(
-            summary = "Creates a user",
-            responses = {@ApiResponse(responseCode = "201", description = "User has been created")})
-    @PostMapping
-    @ResponseStatus(HttpStatus.CREATED)
-    public User create(@Valid @RequestBody User user) {
-        return userService.save(user);
     }
 
     @Operation(
@@ -70,10 +79,18 @@ public class UserController {
             responses = {
                 @ApiResponse(
                         responseCode = "200",
-                        description = "Search was run without any errors")
+                        description = "Search was run without any errors"),
+                @ApiResponse(
+                        responseCode = "401",
+                        description = "You need to be logged in to perform this action",
+                        content = @Content(schema = @Schema(implementation = ErrorResponse.class))),
+                @ApiResponse(
+                        responseCode = "403",
+                        description = "You don't have permission to perform this action",
+                        content = @Content(schema = @Schema(implementation = ErrorResponse.class)))
             })
     @GetMapping("/find")
-    public Page<User> getByName(
+    public Page<GetUserDto> getByName(
             @Parameter(description = "The name to search for") @RequestParam String name,
             @Parameter(description = "The page number") @RequestParam(defaultValue = "0") int page,
             @Parameter(description = "The page size") @RequestParam(defaultValue = "20") int size) {
@@ -87,6 +104,14 @@ public class UserController {
                 @ApiResponse(
                         responseCode = "400",
                         description = "Failed to validate accounts for the user",
+                        content = @Content(schema = @Schema(implementation = ErrorResponse.class))),
+                @ApiResponse(
+                        responseCode = "401",
+                        description = "You need to be logged in to perform this action",
+                        content = @Content(schema = @Schema(implementation = ErrorResponse.class))),
+                @ApiResponse(
+                        responseCode = "403",
+                        description = "You don't have permission to perform this action",
                         content = @Content(schema = @Schema(implementation = ErrorResponse.class)))
             })
     @PostMapping("/transfer")
@@ -95,15 +120,22 @@ public class UserController {
         return transactionService.selfTransfer(dto);
     }
 
-
     @Operation(
             summary = "Gets a user's employment history",
             responses = {
-                    @ApiResponse(responseCode = "200", description = "Success"),
-                    @ApiResponse(
-                            responseCode = "404",
-                            description = "Failed to find user",
-                            content = @Content(schema = @Schema(implementation = ErrorResponse.class)))
+                @ApiResponse(responseCode = "200", description = "Success"),
+                @ApiResponse(
+                        responseCode = "401",
+                        description = "You need to be logged in to perform this action",
+                        content = @Content(schema = @Schema(implementation = ErrorResponse.class))),
+                @ApiResponse(
+                        responseCode = "403",
+                        description = "You don't have permission to perform this action",
+                        content = @Content(schema = @Schema(implementation = ErrorResponse.class))),
+                @ApiResponse(
+                        responseCode = "404",
+                        description = "Failed to find user",
+                        content = @Content(schema = @Schema(implementation = ErrorResponse.class)))
             })
     @GetMapping("employment/{id}")
     public Page<GetEmploymentHistoryDto> getEmploymentHistory(

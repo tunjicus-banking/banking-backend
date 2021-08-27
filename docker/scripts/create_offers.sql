@@ -16,6 +16,6 @@ create table offers
     constraint FK_job_postings_offers foreign key (job_posting_id)
         references job_postings (job_posting_id) on delete cascade,
     constraint FK_users_offers foreign key (user_id)
-        references users (user_id) on delete cascade
+        references users (user_id) on delete no action
 )
 go

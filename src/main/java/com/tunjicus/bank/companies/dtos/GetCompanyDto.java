@@ -1,4 +1,4 @@
-package com.tunjicus.bank.companies.dto;
+package com.tunjicus.bank.companies.dtos;
 
 import com.tunjicus.bank.companies.Company;
 import lombok.Getter;

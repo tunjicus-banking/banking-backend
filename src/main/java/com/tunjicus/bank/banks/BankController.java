@@ -24,7 +24,17 @@ public class BankController {
 
     @Operation(
             summary = "Gets all of the banks, not paginated",
-            responses = {@ApiResponse(responseCode = "200", description = "Successful request")})
+            responses = {
+                @ApiResponse(responseCode = "200", description = "Successful request"),
+                @ApiResponse(
+                        responseCode = "401",
+                        description = "You need to be logged in to perform this action",
+                        content = @Content(schema = @Schema(implementation = ErrorResponse.class))),
+                @ApiResponse(
+                        responseCode = "403",
+                        description = "You don't have permission to perform this action",
+                        content = @Content(schema = @Schema(implementation = ErrorResponse.class)))
+            })
     @GetMapping
     public List<Bank> getAll() {
         return bankService.findAll();
@@ -34,6 +44,14 @@ public class BankController {
             summary = "Get an individual bank",
             responses = {
                 @ApiResponse(responseCode = "200", description = "Bank was found"),
+                @ApiResponse(
+                        responseCode = "401",
+                        description = "You need to be logged in to perform this action",
+                        content = @Content(schema = @Schema(implementation = ErrorResponse.class))),
+                @ApiResponse(
+                        responseCode = "403",
+                        description = "You don't have permission to perform this action",
+                        content = @Content(schema = @Schema(implementation = ErrorResponse.class))),
                 @ApiResponse(
                         responseCode = "404",
                         description = "Bank was not found",
@@ -48,6 +66,14 @@ public class BankController {
             summary = "Creates a bank",
             responses = {
                 @ApiResponse(responseCode = "201", description = "The bank was created"),
+                @ApiResponse(
+                        responseCode = "401",
+                        description = "You need to be logged in to perform this action",
+                        content = @Content(schema = @Schema(implementation = ErrorResponse.class))),
+                @ApiResponse(
+                        responseCode = "403",
+                        description = "You don't have permission to perform this action",
+                        content = @Content(schema = @Schema(implementation = ErrorResponse.class)))
             })
     @PostMapping
     @ResponseStatus(HttpStatus.CREATED)
@@ -59,6 +85,14 @@ public class BankController {
             summary = "Updates a bank",
             responses = {
                 @ApiResponse(responseCode = "200", description = "Update was successful"),
+                @ApiResponse(
+                        responseCode = "401",
+                        description = "You need to be logged in to perform this action",
+                        content = @Content(schema = @Schema(implementation = ErrorResponse.class))),
+                @ApiResponse(
+                        responseCode = "403",
+                        description = "You don't have permission to perform this action",
+                        content = @Content(schema = @Schema(implementation = ErrorResponse.class))),
                 @ApiResponse(
                         responseCode = "404",
                         description = "Bank was not found",
