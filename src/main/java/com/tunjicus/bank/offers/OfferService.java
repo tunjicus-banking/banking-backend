@@ -1,6 +1,7 @@
 package com.tunjicus.bank.offers;
 
 import com.tunjicus.bank.accounts.repositories.AccountRepository;
+import com.tunjicus.bank.auth.AuthService;
 import com.tunjicus.bank.companies.CompanyRepository;
 import com.tunjicus.bank.employmentHistory.EmploymentHistory;
 import com.tunjicus.bank.employmentHistory.EmploymentHistoryRepository;
@@ -43,11 +44,14 @@ public class OfferService {
     private final EmploymentHistoryRepository employmentHistoryRepository;
     private final AccountRepository accountRepository;
     private final RequirementRepository requirementRepository;
+    private final AuthService authService;
 
     Logger logger = LoggerFactory.getLogger(OfferService.class);
 
-    public void acceptOffer(long offerId, int userId) {
+    public void acceptOffer(long offerId) {
+        var userId = authService.getCurrentUser().getId();
         var offer = validatePreUpdate(offerId, userId);
+
         offer.setAccepted((short) 1);
         offerRepository.save(offer);
 
@@ -70,7 +74,8 @@ public class OfferService {
                 new EmploymentHistory(userId, posting.getPositionId(), offer.getSalary()));
     }
 
-    void rejectOffer(long offerId, int userId) {
+    void rejectOffer(long offerId) {
+        var userId = authService.getCurrentUser().getId();
         var offer = validatePreUpdate(offerId, userId);
         offer.setAccepted((short) -1);
         offerRepository.save(offer);
@@ -143,10 +148,11 @@ public class OfferService {
             percentage = percentage.add(BigDecimal.valueOf((requirementEnumLength - requirementsLength) * 100L));
         }
 
+        var oneHundred = BigDecimal.valueOf(100);
         for (RequirementInfo info : requirement.getInfo()) {
             var specification = RequirementSpecification.fromString(info.getSpecification());
             if (specification.equals(RequirementSpecification.N)) {
-                percentage = percentage.add(BigDecimal.valueOf(100));
+                percentage = percentage.add(oneHundred);
                 continue;
             }
 
@@ -161,7 +167,7 @@ public class OfferService {
             logger.info(String.format("Requirement: %s, values: %s", requirementEnum, values));
 
             if (values.left.compareTo(BigDecimal.ZERO) == 0) {
-                percentage = percentage.add(BigDecimal.valueOf(100));
+                percentage = percentage.add(oneHundred);
                 continue;
             }
 
@@ -172,10 +178,10 @@ public class OfferService {
                 continue;
             }
 
-            var fieldPercent = values.right.divide(values.left, 5, RoundingMode.HALF_EVEN).multiply(BigDecimal.valueOf(100));
+            var fieldPercent = values.right.divide(values.left, 5, RoundingMode.HALF_EVEN).multiply(oneHundred);
             logger.info(String.format("Field percent %s", fieldPercent));
-            if (fieldPercent.compareTo(BigDecimal.valueOf(100)) >= 0) {
-                percentage = percentage.add(BigDecimal.valueOf(100));
+            if (fieldPercent.compareTo(oneHundred) >= 0) {
+                percentage = percentage.add(oneHundred);
             } else {
                 if (specification.equals(RequirementSpecification.R)) {
                     return BigDecimal.ZERO;
@@ -194,13 +200,13 @@ public class OfferService {
         }
 
 
-        var salary = percentage.divide(BigDecimal.valueOf(100), 5, RoundingMode.HALF_EVEN).multiply(posting.getSalaryHigh());
+        var salary = percentage.divide(oneHundred, 5, RoundingMode.HALF_EVEN).multiply(posting.getSalaryHigh());
         if (salary.compareTo(posting.getSalaryLow()) < 0) {
             return posting.getSalaryLow();
         }
 
         // don't apply modifier if 100% match
-        if (percentage.compareTo(BigDecimal.valueOf(100)) == 0) return salary;
+        if (percentage.compareTo(oneHundred) == 0) return salary;
 
         salary = applyModifier(salary, requirement.getModifier());
         if (salary.compareTo(posting.getSalaryLow()) < 0) {

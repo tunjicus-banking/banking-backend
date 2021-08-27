@@ -28,6 +28,14 @@ public class AccountController {
             responses = {
                 @ApiResponse(responseCode = "200", description = "Account has been found"),
                 @ApiResponse(
+                        responseCode = "401",
+                        description = "You need to be logged in to perform this action",
+                        content = @Content(schema = @Schema(implementation = ErrorResponse.class))),
+                @ApiResponse(
+                        responseCode = "403",
+                        description = "You don't have permission to perform this action",
+                        content = @Content(schema = @Schema(implementation = ErrorResponse.class))),
+                @ApiResponse(
                         responseCode = "404",
                         description = "Account has not been found (closed or doesn't exist)",
                         content = @Content(schema = @Schema(implementation = ErrorResponse.class)))
@@ -47,6 +55,14 @@ public class AccountController {
                         description = "Attempted to create an account of type unknown",
                         content = @Content(schema = @Schema(implementation = ErrorResponse.class))),
                 @ApiResponse(
+                        responseCode = "401",
+                        description = "You need to be logged in to perform this action",
+                        content = @Content(schema = @Schema(implementation = ErrorResponse.class))),
+                @ApiResponse(
+                        responseCode = "403",
+                        description = "You don't have permission to perform this action",
+                        content = @Content(schema = @Schema(implementation = ErrorResponse.class))),
+                @ApiResponse(
                         responseCode = "404",
                         description = "Failed to find the user the account was intended for",
                         content = @Content(schema = @Schema(implementation = ErrorResponse.class)))
@@ -61,6 +77,14 @@ public class AccountController {
             summary = "Deletes an account",
             responses = {
                 @ApiResponse(responseCode = "204", description = "The account has been deleted"),
+                @ApiResponse(
+                        responseCode = "401",
+                        description = "You need to be logged in to perform this action",
+                        content = @Content(schema = @Schema(implementation = ErrorResponse.class))),
+                @ApiResponse(
+                        responseCode = "403",
+                        description = "You don't have permission to perform this action",
+                        content = @Content(schema = @Schema(implementation = ErrorResponse.class))),
                 @ApiResponse(
                         responseCode = "404",
                         description = "The account cannot be found",

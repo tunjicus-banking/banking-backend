@@ -29,6 +29,14 @@ public class TransactionController {
             responses = {
                 @ApiResponse(responseCode = "201", description = "The transaction was successful"),
                 @ApiResponse(
+                        responseCode = "401",
+                        description = "You need to be logged in to perform this action",
+                        content = @Content(schema = @Schema(implementation = ErrorResponse.class))),
+                @ApiResponse(
+                        responseCode = "403",
+                        description = "You don't have permission to perform this action",
+                        content = @Content(schema = @Schema(implementation = ErrorResponse.class))),
+                @ApiResponse(
                         responseCode = "400",
                         description =
                                 "The request failed for some reason, i.e. the sending user didn't have the funds",

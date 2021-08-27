@@ -50,8 +50,8 @@ public class Account {
 
     public Account() {}
 
-    public Account(PostAccountDto accountDto) {
-        userId = accountDto.getUserId();
+    public Account(PostAccountDto accountDto, int userId) {
+        this.userId = userId;
         bankId = accountDto.getBankId();
         type = postAccountTypeToString(accountDto.getType());
         funds = BigDecimal.valueOf(0);

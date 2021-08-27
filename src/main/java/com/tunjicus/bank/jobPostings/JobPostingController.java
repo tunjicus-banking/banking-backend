@@ -34,6 +34,14 @@ public class JobPostingController {
             responses = {
                 @ApiResponse(responseCode = "200", description = "The posting was found"),
                 @ApiResponse(
+                        responseCode = "401",
+                        description = "You need to be logged in to perform this action",
+                        content = @Content(schema = @Schema(implementation = ErrorResponse.class))),
+                @ApiResponse(
+                        responseCode = "403",
+                        description = "You don't have permission to perform this action",
+                        content = @Content(schema = @Schema(implementation = ErrorResponse.class))),
+                @ApiResponse(
                         responseCode = "404",
                         description = "Posting not found",
                         content = @Content(schema = @Schema(implementation = ErrorResponse.class)))
@@ -48,6 +56,14 @@ public class JobPostingController {
             summary = "Gets all job postings (paginated)",
             responses = {
                 @ApiResponse(responseCode = "200", description = "Result returned"),
+                @ApiResponse(
+                        responseCode = "401",
+                        description = "You need to be logged in to perform this action",
+                        content = @Content(schema = @Schema(implementation = ErrorResponse.class))),
+                @ApiResponse(
+                        responseCode = "403",
+                        description = "You don't have permission to perform this action",
+                        content = @Content(schema = @Schema(implementation = ErrorResponse.class))),
                 @ApiResponse(
                         responseCode = "404",
                         description = "Company id or position id not found",
@@ -78,6 +94,14 @@ public class JobPostingController {
             responses = {
                 @ApiResponse(responseCode = "201", description = "The posting was created"),
                 @ApiResponse(
+                        responseCode = "401",
+                        description = "You need to be logged in to perform this action",
+                        content = @Content(schema = @Schema(implementation = ErrorResponse.class))),
+                @ApiResponse(
+                        responseCode = "403",
+                        description = "You don't have permission to perform this action",
+                        content = @Content(schema = @Schema(implementation = ErrorResponse.class))),
+                @ApiResponse(
                         responseCode = "404",
                         description = "A valid position with the position id was not found",
                         content = @Content(schema = @Schema(implementation = ErrorResponse.class)))
@@ -92,6 +116,14 @@ public class JobPostingController {
             summary = "Updates a job posting",
             responses = {
                 @ApiResponse(responseCode = "200", description = "The posting was updated"),
+                @ApiResponse(
+                        responseCode = "401",
+                        description = "You need to be logged in to perform this action",
+                        content = @Content(schema = @Schema(implementation = ErrorResponse.class))),
+                @ApiResponse(
+                        responseCode = "403",
+                        description = "You don't have permission to perform this action",
+                        content = @Content(schema = @Schema(implementation = ErrorResponse.class))),
                 @ApiResponse(
                         responseCode = "404",
                         description =
@@ -110,6 +142,14 @@ public class JobPostingController {
             responses = {
                 @ApiResponse(responseCode = "200", description = "The posting was deleted"),
                 @ApiResponse(
+                        responseCode = "401",
+                        description = "You need to be logged in to perform this action",
+                        content = @Content(schema = @Schema(implementation = ErrorResponse.class))),
+                @ApiResponse(
+                        responseCode = "403",
+                        description = "You don't have permission to perform this action",
+                        content = @Content(schema = @Schema(implementation = ErrorResponse.class))),
+                @ApiResponse(
                         responseCode = "404",
                         description = "A posting with the id could not be found",
                         content = @Content(schema = @Schema(implementation = ErrorResponse.class)))
@@ -125,6 +165,14 @@ public class JobPostingController {
             summary = "Activates a job posting",
             responses = {
                 @ApiResponse(responseCode = "204", description = "The posting was activated"),
+                @ApiResponse(
+                        responseCode = "401",
+                        description = "You need to be logged in to perform this action",
+                        content = @Content(schema = @Schema(implementation = ErrorResponse.class))),
+                @ApiResponse(
+                        responseCode = "403",
+                        description = "You don't have permission to perform this action",
+                        content = @Content(schema = @Schema(implementation = ErrorResponse.class))),
                 @ApiResponse(
                         responseCode = "404",
                         description = "A posting with the id could not be found",
@@ -146,6 +194,14 @@ public class JobPostingController {
                         description = "The user is a company",
                         content = @Content(schema = @Schema(implementation = ErrorResponse.class))),
                 @ApiResponse(
+                        responseCode = "401",
+                        description = "You need to be logged in to perform this action",
+                        content = @Content(schema = @Schema(implementation = ErrorResponse.class))),
+                @ApiResponse(
+                        responseCode = "403",
+                        description = "You don't have permission to perform this action",
+                        content = @Content(schema = @Schema(implementation = ErrorResponse.class))),
+                @ApiResponse(
                         responseCode = "404",
                         description = "A posting with the id could not be found",
                         content = @Content(schema = @Schema(implementation = ErrorResponse.class)))
@@ -163,7 +219,16 @@ public class JobPostingController {
                 @ApiResponse(responseCode = "201", description = "Application response generated"),
                 @ApiResponse(
                         responseCode = "400",
-                        description = "Application to posting with open offer or application for a position the user currently holds",
+                        description =
+                                "Application to posting with open offer or application for a position the user currently holds",
+                        content = @Content(schema = @Schema(implementation = ErrorResponse.class))),
+                @ApiResponse(
+                        responseCode = "401",
+                        description = "You need to be logged in to perform this action",
+                        content = @Content(schema = @Schema(implementation = ErrorResponse.class))),
+                @ApiResponse(
+                        responseCode = "403",
+                        description = "You don't have permission to perform this action",
                         content = @Content(schema = @Schema(implementation = ErrorResponse.class))),
                 @ApiResponse(
                         responseCode = "404",

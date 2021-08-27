@@ -16,6 +16,6 @@ create table employment_history
     constraint FK_users_employment_history foreign key (user_id)
         references users (user_id) on delete cascade,
     constraint FK_positions_employment_history foreign key (position_id)
-        references positions (position_id) on delete cascade
+        references positions (position_id) on delete no action
 )
 go

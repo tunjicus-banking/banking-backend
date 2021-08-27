@@ -11,10 +11,6 @@ import javax.validation.constraints.Positive;
 @Getter
 @Setter
 public class PostAccountDto {
-    @NotNull(message = "user id must not be null")
-    @Positive(message = "user id must be positive")
-    private int userId;
-
     @NotNull(message = "bank id must not be null")
     @Positive(message = "bank id must be positive")
     private int bankId;
