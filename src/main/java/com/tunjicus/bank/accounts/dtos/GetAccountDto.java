@@ -3,6 +3,7 @@ package com.tunjicus.bank.accounts.dtos;
 import com.fasterxml.jackson.annotation.JsonFormat;
 import com.tunjicus.bank.accounts.models.Account;
 import com.tunjicus.bank.accounts.enums.AccountType;
+import lombok.EqualsAndHashCode;
 import lombok.Getter;
 import lombok.Setter;
 
@@ -11,6 +12,7 @@ import java.util.Date;
 
 @Getter
 @Setter
+@EqualsAndHashCode
 public class GetAccountDto {
     private int id;
     private int userId;

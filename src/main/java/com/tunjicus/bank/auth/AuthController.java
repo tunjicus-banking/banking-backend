@@ -3,7 +3,7 @@ package com.tunjicus.bank.auth;
 import com.tunjicus.bank.auth.dtos.GetLoginDto;
 import com.tunjicus.bank.auth.dtos.PostLoginDto;
 import com.tunjicus.bank.auth.dtos.RegisterDto;
-import com.tunjicus.bank.shared.ErrorResponse;
+import com.tunjicus.bank.exceptions.ErrorResponse;
 import com.tunjicus.bank.users.UserService;
 import com.tunjicus.bank.users.dtos.GetUserDto;
 import io.swagger.v3.oas.annotations.Operation;

@@ -1,6 +1,6 @@
 package com.tunjicus.bank.offers;
 
-import com.tunjicus.bank.shared.ErrorResponse;
+import com.tunjicus.bank.exceptions.ErrorResponse;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.Parameter;
 import io.swagger.v3.oas.annotations.media.Content;

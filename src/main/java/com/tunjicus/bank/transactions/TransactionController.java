@@ -1,6 +1,6 @@
 package com.tunjicus.bank.transactions;
 
-import com.tunjicus.bank.shared.ErrorResponse;
+import com.tunjicus.bank.exceptions.ErrorResponse;
 import com.tunjicus.bank.transactions.dtos.GetTransactionDto;
 import com.tunjicus.bank.transactions.dtos.PostTransactionDto;
 import io.swagger.v3.oas.annotations.Operation;

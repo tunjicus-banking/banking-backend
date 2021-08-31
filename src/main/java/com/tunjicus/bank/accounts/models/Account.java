@@ -3,6 +3,7 @@ package com.tunjicus.bank.accounts.models;
 import com.tunjicus.bank.accounts.dtos.PostAccountDto;
 import com.tunjicus.bank.accounts.enums.AccountType;
 import com.tunjicus.bank.accounts.enums.PostAccountType;
+import lombok.AllArgsConstructor;
 import lombok.Getter;
 import lombok.Setter;
 import org.hibernate.annotations.Nationalized;
@@ -17,6 +18,7 @@ import java.util.Date;
 @Entity(name = "accounts")
 @Getter
 @Setter
+@AllArgsConstructor
 public class Account {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
