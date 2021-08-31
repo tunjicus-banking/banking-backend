@@ -1,8 +1,8 @@
-package com.tunjicus.bank.companies;
+package com.tunjicus.bank.items;
 
-import com.tunjicus.bank.companies.dtos.GetCompanyDto;
-import com.tunjicus.bank.companies.dtos.PostCompanyDto;
 import com.tunjicus.bank.exceptions.ErrorResponse;
+import com.tunjicus.bank.items.dtos.GetItemDto;
+import com.tunjicus.bank.items.dtos.PostItemDto;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.Parameter;
 import io.swagger.v3.oas.annotations.media.Content;
@@ -18,16 +18,16 @@ import org.springframework.web.bind.annotation.*;
 import javax.validation.Valid;
 
 @RestController
-@RequestMapping(value = "/company", produces = MediaType.APPLICATION_JSON_VALUE)
+@RequestMapping(value = "/item", produces = MediaType.APPLICATION_JSON_VALUE)
 @RequiredArgsConstructor
-@Tag(name = "Companies", description = "Companies can employ users")
-public class CompanyController {
-    private final CompanyService companyService;
+@Tag(name = "Items", description = "Represents an item that users can sell/buy")
+public class ItemController {
+    private final ItemService itemService;
 
     @Operation(
-            summary = "Gets all of the companies (paginated)",
+            summary = "Gets all items. Filterable by name and user id (paginated)",
             responses = {
-                @ApiResponse(responseCode = "200", description = "Successful response"),
+                @ApiResponse(responseCode = "200", description = "Response has been generated"),
                 @ApiResponse(
                         responseCode = "401",
                         description = "You need to be logged in to perform this action",
@@ -38,16 +38,19 @@ public class CompanyController {
                         content = @Content(schema = @Schema(implementation = ErrorResponse.class)))
             })
     @GetMapping
-    public Page<GetCompanyDto> getAll(
+    public Page<GetItemDto> getAll(
+            @Parameter(description = "The name to search for") @RequestParam(defaultValue = "") String name,
+            @Parameter(description = "A user id to filter by") @RequestParam(defaultValue = "-1")
+                    int userId,
             @Parameter(description = "The page number") @RequestParam(defaultValue = "0") int page,
             @Parameter(description = "The page size") @RequestParam(defaultValue = "20") int size) {
-        return companyService.findAll(page, size);
+        return itemService.findAll(name, userId, page, size);
     }
 
     @Operation(
-            summary = "Gets the company with the id",
+            summary = "Gets an item by id",
             responses = {
-                @ApiResponse(responseCode = "200", description = "Company was found"),
+                @ApiResponse(responseCode = "200", description = "Item has been found"),
                 @ApiResponse(
                         responseCode = "401",
                         description = "You need to be logged in to perform this action",
@@ -58,23 +61,21 @@ public class CompanyController {
                         content = @Content(schema = @Schema(implementation = ErrorResponse.class))),
                 @ApiResponse(
                         responseCode = "404",
-                        description = "Company was not found",
+                        description = "Failed to find item with this id",
                         content = @Content(schema = @Schema(implementation = ErrorResponse.class)))
             })
     @GetMapping("/{id}")
-    public GetCompanyDto get(
-            @Parameter(description = "The id of the company") @PathVariable int id) {
-        return companyService.findById(id);
+    public GetItemDto get(@Parameter(description = "The id of the item") @PathVariable int id) {
+        return itemService.findById(id);
     }
 
     @Operation(
-            summary = "Creates a company",
+            summary = "Creates an item",
             responses = {
-                @ApiResponse(responseCode = "201", description = "Company was created"),
+                @ApiResponse(responseCode = "201", description = "Item has been created"),
                 @ApiResponse(
                         responseCode = "400",
-                        description =
-                                "A user or company with this name already exists or validation error",
+                        description = "Validation error or an item with this name already exists",
                         content = @Content(schema = @Schema(implementation = ErrorResponse.class))),
                 @ApiResponse(
                         responseCode = "401",
@@ -83,11 +84,34 @@ public class CompanyController {
                 @ApiResponse(
                         responseCode = "403",
                         description = "You don't have permission to perform this action",
-                        content = @Content(schema = @Schema(implementation = ErrorResponse.class)))
+                        content = @Content(schema = @Schema(implementation = ErrorResponse.class))),
             })
     @PostMapping
     @ResponseStatus(HttpStatus.CREATED)
-    public GetCompanyDto create(@Valid @RequestBody PostCompanyDto dto) {
-        return companyService.create(dto);
+    public GetItemDto create(@Valid @RequestBody PostItemDto dto) {
+        return itemService.create(dto);
+    }
+
+    @Operation(
+            summary = "Deletes an item",
+            responses = {
+                @ApiResponse(responseCode = "200", description = "Item has been deleted"),
+                @ApiResponse(
+                        responseCode = "401",
+                        description = "You need to be logged in to perform this action",
+                        content = @Content(schema = @Schema(implementation = ErrorResponse.class))),
+                @ApiResponse(
+                        responseCode = "403",
+                        description = "You don't have permission to perform this action",
+                        content = @Content(schema = @Schema(implementation = ErrorResponse.class))),
+                @ApiResponse(
+                        responseCode = "404",
+                        description = "Item has not been found",
+                        content = @Content(schema = @Schema(implementation = ErrorResponse.class)))
+            })
+    @DeleteMapping("/{id}")
+    @ResponseStatus(HttpStatus.NO_CONTENT)
+    public void delete(@Parameter(description = "The id of the item") @PathVariable int id) {
+        itemService.delete(id);
     }
 }

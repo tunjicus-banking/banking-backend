@@ -16,9 +16,10 @@ import org.springframework.stereotype.Service;
 @Service
 @RequiredArgsConstructor
 public class AuthService {
-    private final AuthenticationManager authenticationManager;
     private final UserRepository userRepository;
+    private final AuthenticationManager authenticationManager;
     private final JwtProvider jwtProvider;
+    private final IAuthenticationFacade authenticationFacade;
 
     GetLoginDto authenticateUser(PostLoginDto dto) {
         Authentication authentication =
@@ -35,7 +36,7 @@ public class AuthService {
     }
 
     public User getCurrentUser() {
-        Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
+        Authentication authentication = authenticationFacade.getAuthentication();
         return userRepository
                 .findByUsername(authentication.getName())
                 .orElseThrow(

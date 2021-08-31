@@ -1,4 +1,4 @@
-package com.tunjicus.bank.shared;
+package com.tunjicus.bank.exceptions;
 
 import java.util.Date;
 

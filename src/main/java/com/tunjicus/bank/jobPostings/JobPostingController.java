@@ -3,7 +3,7 @@ package com.tunjicus.bank.jobPostings;
 import com.tunjicus.bank.jobPostings.dtos.GetJobPostingDto;
 import com.tunjicus.bank.jobPostings.dtos.PostJobPostingDto;
 import com.tunjicus.bank.offers.GetOfferDto;
-import com.tunjicus.bank.shared.ErrorResponse;
+import com.tunjicus.bank.exceptions.ErrorResponse;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.Parameter;
 import io.swagger.v3.oas.annotations.media.Content;

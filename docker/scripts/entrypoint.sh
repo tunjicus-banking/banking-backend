@@ -35,6 +35,7 @@ run_script "create_offers"
 run_script "create_employment_history"
 run_script "create_roles"
 run_script "create_user_roles"
+run_script "create_items"
 
 # Insert data
 run_script "insert_banks"

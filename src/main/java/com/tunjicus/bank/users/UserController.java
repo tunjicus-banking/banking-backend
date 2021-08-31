@@ -1,7 +1,7 @@
 package com.tunjicus.bank.users;
 
 import com.tunjicus.bank.employmentHistory.GetEmploymentHistoryDto;
-import com.tunjicus.bank.shared.ErrorResponse;
+import com.tunjicus.bank.exceptions.ErrorResponse;
 import com.tunjicus.bank.transactions.TransactionService;
 import com.tunjicus.bank.transactions.dtos.SelfTransferDto;
 import com.tunjicus.bank.users.dtos.GetUserDto;

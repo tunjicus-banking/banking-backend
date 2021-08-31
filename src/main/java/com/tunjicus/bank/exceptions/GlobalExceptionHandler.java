@@ -1,4 +1,4 @@
-package com.tunjicus.bank.shared;
+package com.tunjicus.bank.exceptions;
 
 import com.tunjicus.bank.accounts.exceptions.AccountNotFoundException;
 import com.tunjicus.bank.accounts.exceptions.IllegalAccountCreationException;
@@ -6,6 +6,8 @@ import com.tunjicus.bank.accounts.exceptions.ValidAccountNotFoundException;
 import com.tunjicus.bank.banks.exceptions.BankNotFoundException;
 import com.tunjicus.bank.companies.exceptions.CompanyExistsException;
 import com.tunjicus.bank.companies.exceptions.CompanyNotFoundException;
+import com.tunjicus.bank.items.exceptions.ItemExistsException;
+import com.tunjicus.bank.items.exceptions.ItemNotFoundException;
 import com.tunjicus.bank.jobPostings.exceptions.CompanyApplicationException;
 import com.tunjicus.bank.jobPostings.exceptions.InvalidDuplicateApplicationException;
 import com.tunjicus.bank.jobPostings.exceptions.JobPostingNotFoundException;
@@ -41,7 +43,8 @@ public class GlobalExceptionHandler {
         CompanyNotFoundException.class,
         JobPostingNotFoundException.class,
         PositionNotFoundException.class,
-        UserNotFoundException.class
+        UserNotFoundException.class,
+        ItemNotFoundException.class
     })
     public ResponseEntity<ErrorResponse> handleNotFound(Exception e) {
         return handleExceptions(HttpStatus.NOT_FOUND, e);
@@ -63,7 +66,8 @@ public class GlobalExceptionHandler {
         InsufficientFundsException.class,
         NoCheckingAccountException.class,
         TransactionException.class,
-        UserValidationException.class
+        UserValidationException.class,
+        ItemExistsException.class
     })
     public ResponseEntity<ErrorResponse> handleBadRequest(Exception e) {
         return handleExceptions(HttpStatus.BAD_REQUEST, e);

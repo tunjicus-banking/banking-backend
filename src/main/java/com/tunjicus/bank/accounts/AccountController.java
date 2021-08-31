@@ -2,7 +2,7 @@ package com.tunjicus.bank.accounts;
 
 import com.tunjicus.bank.accounts.dtos.GetAccountDto;
 import com.tunjicus.bank.accounts.dtos.PostAccountDto;
-import com.tunjicus.bank.shared.ErrorResponse;
+import com.tunjicus.bank.exceptions.ErrorResponse;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.Parameter;
 import io.swagger.v3.oas.annotations.media.Content;
