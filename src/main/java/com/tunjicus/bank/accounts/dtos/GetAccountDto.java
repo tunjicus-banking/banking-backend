@@ -13,7 +13,6 @@ import java.util.Date;
 
 @Getter
 @Setter
-@EqualsAndHashCode
 public class GetAccountDto {
     private int id;
     private int userId;
@@ -40,5 +39,30 @@ public class GetAccountDto {
             case "B" -> AccountType.BRAND;
             default -> throw new IllegalStateException("Unexpected value: " + type);
         };
+    }
+
+    @Override
+    public boolean equals(Object o) {
+        if (this == o) return true;
+        if (o == null || getClass() != o.getClass()) return false;
+
+        GetAccountDto that = (GetAccountDto) o;
+
+        if (getId() != that.getId()) return false;
+        if (getUserId() != that.getUserId()) return false;
+        if (getBankId() != that.getBankId()) return false;
+        if (getType() != that.getType()) return false;
+        return getFunds().equals(that.getFunds());
+    }
+
+    @Override
+    public int hashCode() {
+        int result = getId();
+        result = 31 * result + getUserId();
+        result = 31 * result + getBankId();
+        result = 31 * result + getType().hashCode();
+        result = 31 * result + getFunds().hashCode();
+        result = 31 * result + getCreatedAt().hashCode();
+        return result;
     }
 }
