@@ -17,3 +17,17 @@ the project by running `./mvnw package` and then run the application by running 
 
 By default, the application runs on port `8080`. You change it by changing the `server.port`
 property [here](/src/main/resources/application.properties).
+
+## A Note On Simulated Time
+
+The application uses a simulated timescale to accelerate events. The
+degree of scaling is subject to change, but the implementation will likely
+remain the same. 
+
+Any timestamps returned from the api are simulated dates.
+These dates grow backwards, away from the current time. That means
+that a timestamp might show that an event happened in 2020 even though
+it was created in the current year. This makes timestamps returned from
+the api unusable for any purpose other than displaying how "long ago" an
+event occurred. These simulated timestamps should not be displayed directly
+as it will just lead to confusion.

@@ -4,6 +4,7 @@ import com.tunjicus.bank.accounts.enums.AccountType;
 import com.tunjicus.bank.accounts.exceptions.ValidAccountNotFoundException;
 import com.tunjicus.bank.accounts.models.Account;
 import com.tunjicus.bank.accounts.repositories.AccountRepository;
+import com.tunjicus.bank.auth.AuthService;
 import com.tunjicus.bank.transactions.dtos.GetTransactionDto;
 import com.tunjicus.bank.transactions.dtos.PostTransactionDto;
 import com.tunjicus.bank.transactions.dtos.SelfTransferDto;
@@ -22,6 +23,7 @@ import java.util.Date;
 public class TransactionService {
     private final TransactionRepository transactionRepository;
     private final AccountRepository accountRepository;
+    private final AuthService authService;
 
     GetTransactionDto usersTransfer(PostTransactionDto transactionDto) {
         if (transactionDto.getFrom() == transactionDto.getTo()) {
@@ -55,22 +57,24 @@ public class TransactionService {
             throw new SelfTransferException("Cannot transfer between the same account");
         }
 
+        var userId = authService.getCurrentUser().getId();
+
         var fromAccount =
                 accountRepository
                         .findByUserIdEqualsAndIdEqualsAndFundsGreaterThanAndClosedIsFalse(
-                                dto.getUserId(), dto.getFrom(), dto.getAmount())
+                                userId, dto.getFrom(), dto.getAmount())
                         .orElseThrow(
                                 () ->
                                         new ValidAccountNotFoundException(
-                                                dto.getUserId(), dto.getFrom()));
+                                                userId, dto.getFrom()));
 
         var toAccount =
                 accountRepository
-                        .findByUserIdEqualsAndIdEqualsAndClosedIsFalse(dto.getUserId(), dto.getTo())
+                        .findByUserIdEqualsAndIdEqualsAndClosedIsFalse(userId, dto.getTo())
                         .orElseThrow(
                                 () ->
                                         new ValidAccountNotFoundException(
-                                                dto.getUserId(), dto.getTo()));
+                                                userId, dto.getTo()));
 
         fromAccount.setFunds(fromAccount.getFunds().subtract(dto.getAmount()));
         toAccount.setFunds(toAccount.getFunds().add(dto.getAmount()));
@@ -79,7 +83,7 @@ public class TransactionService {
         accountRepository.save(toAccount);
         var t =
                 transactionRepository.save(
-                        new Transaction(dto, fromAccount.getType(), toAccount.getType()));
+                        new Transaction(dto, fromAccount.getType(), toAccount.getType(), userId));
         t.setTransactionTime(new Date());
 
         return new SelfTransferDto(t);

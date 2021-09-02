@@ -9,6 +9,7 @@ import org.hibernate.annotations.Nationalized;
 
 import javax.persistence.*;
 import java.math.BigDecimal;
+import java.time.Instant;
 import java.util.Date;
 
 @Entity(name = "transactions")
@@ -58,9 +59,9 @@ public class Transaction {
         amount = transactionDto.getAmount();
     }
 
-    public Transaction(SelfTransferDto transferDto, String fromType, String toType) {
-        fromUser = transferDto.getUserId();
-        toUser = transferDto.getUserId();
+    public Transaction(SelfTransferDto transferDto, String fromType, String toType, int userId) {
+        fromUser = userId;
+        toUser = userId;
         fromAccount = transferDto.getFrom();
         this.fromType = fromType;
         toAccount = transferDto.getTo();

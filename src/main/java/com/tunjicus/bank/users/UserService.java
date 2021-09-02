@@ -6,6 +6,8 @@ import com.tunjicus.bank.employmentHistory.EmploymentHistoryRepository;
 import com.tunjicus.bank.employmentHistory.GetEmploymentHistoryDto;
 import com.tunjicus.bank.roles.RoleName;
 import com.tunjicus.bank.roles.RolesRepository;
+import com.tunjicus.bank.transactions.TransactionRepository;
+import com.tunjicus.bank.transactions.dtos.GetTransactionDto;
 import com.tunjicus.bank.users.dtos.GetUserDto;
 import com.tunjicus.bank.users.dtos.UpdateUserDto;
 import com.tunjicus.bank.users.exceptions.UserNotFoundException;
@@ -19,8 +21,6 @@ import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.domain.Sort;
 import org.springframework.http.HttpStatus;
-import org.springframework.security.core.Authentication;
-import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -34,6 +34,7 @@ public class UserService {
     private final UserRepository userRepository;
     private final EmploymentHistoryRepository employmentHistoryRepository;
     private final RolesRepository rolesRepository;
+    private final TransactionRepository transactionRepository;
     private final AuthService authService;
     private final PasswordEncoder passwordEncoder;
 
@@ -63,8 +64,7 @@ public class UserService {
         if (userRole.isEmpty()) {
             logger.error("Failed to find USER role");
             throw new ResponseStatusException(
-                    HttpStatus.INTERNAL_SERVER_ERROR, "Internal Server Error"
-            );
+                    HttpStatus.INTERNAL_SERVER_ERROR, "Internal Server Error");
         }
         var user = new User(dto, password);
         user.getRoles().add(userRole.get());
@@ -92,8 +92,9 @@ public class UserService {
             var lastname =
                     Strings.join(
                             Arrays.asList(Arrays.copyOfRange(nameSplit, 1, nameSplit.length)), ' ');
-            output = userRepository.findUsersByFirstNameContainsAndLastNameContains(
-                    firstName, lastname, paging);
+            output =
+                    userRepository.findUsersByFirstNameContainsAndLastNameContains(
+                            firstName, lastname, paging);
         } else {
             output = userRepository.findUsersByFirstNameContains(firstName, paging);
         }
@@ -102,7 +103,8 @@ public class UserService {
     }
 
     GetUserDto update(UpdateUserDto user, int id) {
-        var foundUser = userRepository.findById(id).orElseThrow(() -> new UserNotFoundException(id));
+        var foundUser =
+                userRepository.findById(id).orElseThrow(() -> new UserNotFoundException(id));
 
         foundUser.setUsername(user.getUsername());
         foundUser.setFirstName(user.getFirstName());
@@ -125,5 +127,21 @@ public class UserService {
         return employmentHistoryRepository
                 .findAllByUserId(userId, pageable)
                 .map(GetEmploymentHistoryDto::new);
+    }
+
+    Page<GetTransactionDto> getTransactionHistory(int page, int size) {
+        page = Math.max(page, 0);
+        size = size < 0 ? 20 : size;
+
+        var userId = authService.getCurrentUser().getId();
+        var pageable = PageRequest.of(page, size, Sort.by("transactionTime").descending());
+
+        if (!userRepository.existsById(userId)) {
+            throw new UserNotFoundException(userId);
+        }
+
+        return transactionRepository
+                .findAllByFromUserOrToUser(userId, userId, pageable)
+                .map(GetTransactionDto::new);
     }
 }

@@ -3,6 +3,7 @@ package com.tunjicus.bank.accounts.dtos;
 import com.fasterxml.jackson.annotation.JsonFormat;
 import com.tunjicus.bank.accounts.models.Account;
 import com.tunjicus.bank.accounts.enums.AccountType;
+import com.tunjicus.bank.scheduled.TimeService;
 import lombok.EqualsAndHashCode;
 import lombok.Getter;
 import lombok.Setter;
@@ -29,7 +30,7 @@ public class GetAccountDto {
         bankId = account.getBankId();
         type = convertType(account.getType());
         funds = account.getFunds();
-        createdAt = account.getCreatedAt();
+        createdAt = TimeService.calculateSimulatedDate(account.getCreatedAt());
     }
 
     private static AccountType convertType(String type) {

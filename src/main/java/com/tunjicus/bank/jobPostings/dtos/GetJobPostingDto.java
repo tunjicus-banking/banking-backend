@@ -1,6 +1,7 @@
 package com.tunjicus.bank.jobPostings.dtos;
 
 import com.tunjicus.bank.jobPostings.JobPosting;
+import com.tunjicus.bank.scheduled.TimeService;
 import lombok.Getter;
 
 import java.math.BigDecimal;
@@ -22,7 +23,7 @@ public class GetJobPostingDto {
         description = jobPosting.getDescription();
         salaryLow = jobPosting.getSalaryLow();
         salaryHigh = jobPosting.getSalaryHigh();
-        upSince = jobPosting.getUpSince();
+        upSince = TimeService.calculateSimulatedDate(jobPosting.getUpSince());
         active = jobPosting.isActive();
     }
 }

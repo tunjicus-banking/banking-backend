@@ -3,6 +3,7 @@ package com.tunjicus.bank.users;
 import com.tunjicus.bank.employmentHistory.GetEmploymentHistoryDto;
 import com.tunjicus.bank.exceptions.ErrorResponse;
 import com.tunjicus.bank.transactions.TransactionService;
+import com.tunjicus.bank.transactions.dtos.GetTransactionDto;
 import com.tunjicus.bank.transactions.dtos.SelfTransferDto;
 import com.tunjicus.bank.users.dtos.GetUserDto;
 import com.tunjicus.bank.users.dtos.UpdateUserDto;
@@ -131,16 +132,32 @@ public class UserController {
                 @ApiResponse(
                         responseCode = "403",
                         description = "You don't have permission to perform this action",
-                        content = @Content(schema = @Schema(implementation = ErrorResponse.class))),
-                @ApiResponse(
-                        responseCode = "404",
-                        description = "Failed to find user",
                         content = @Content(schema = @Schema(implementation = ErrorResponse.class)))
             })
-    @GetMapping("employment/{id}")
+    @GetMapping("employment")
     public Page<GetEmploymentHistoryDto> getEmploymentHistory(
             @Parameter(description = "The page number") @RequestParam(defaultValue = "0") int page,
             @Parameter(description = "The page size") @RequestParam(defaultValue = "20") int size) {
         return userService.getEmploymentHistory(page, size);
+    }
+
+    @Operation(
+            summary = "Gets a user's transaction history",
+            responses = {
+                @ApiResponse(responseCode = "200", description = "Success"),
+                @ApiResponse(
+                        responseCode = "401",
+                        description = "You need to be logged in to perform this action",
+                        content = @Content(schema = @Schema(implementation = ErrorResponse.class))),
+                @ApiResponse(
+                        responseCode = "403",
+                        description = "You don't have permission to perform this action",
+                        content = @Content(schema = @Schema(implementation = ErrorResponse.class)))
+            })
+    @GetMapping("transactions")
+    public Page<GetTransactionDto> getTransactionHistory(
+            @Parameter(description = "The page number") @RequestParam(defaultValue = "0") int page,
+            @Parameter(description = "The page size") @RequestParam(defaultValue = "20") int size) {
+        return userService.getTransactionHistory(page, size);
     }
 }

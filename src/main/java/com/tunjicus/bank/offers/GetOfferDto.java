@@ -1,6 +1,6 @@
 package com.tunjicus.bank.offers;
 
-import com.tunjicus.bank.offers.Offer;
+import com.tunjicus.bank.scheduled.TimeService;
 import lombok.Getter;
 
 import java.math.BigDecimal;
@@ -21,7 +21,7 @@ public class GetOfferDto {
         userId = offer.getUserId();
         salary = offer.getSalary();
         status = toOfferStatus(offer.getAccepted());
-        offerTime = new Date();
+        offerTime = offer.getOfferTime() == null ? new Date() : TimeService.calculateSimulatedDate(offer.getOfferTime());
     }
 
     private static OfferStatus toOfferStatus(int status) {

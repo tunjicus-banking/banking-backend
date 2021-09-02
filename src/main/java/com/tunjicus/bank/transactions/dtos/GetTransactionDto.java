@@ -1,9 +1,11 @@
 package com.tunjicus.bank.transactions.dtos;
 
+import com.tunjicus.bank.scheduled.TimeService;
 import com.tunjicus.bank.transactions.Transaction;
 import lombok.Getter;
 
 import java.math.BigDecimal;
+import java.time.Instant;
 import java.util.Date;
 
 @Getter
@@ -17,6 +19,6 @@ public final class GetTransactionDto {
         from = transaction.getFromUser();
         to = transaction.getToUser();
         amount = transaction.getAmount();
-        transactionTime = transaction.getTransactionTime();
+        transactionTime = TimeService.calculateSimulatedDate(transaction.getTransactionTime());
     }
 }
