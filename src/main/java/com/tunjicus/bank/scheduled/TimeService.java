@@ -18,6 +18,7 @@ public class TimeService {
         if (utcDate == null) return null;
 
         var currentDate = new Date();
+
         // Get the offset of the machine's local time from utc
         var offset = TimeZone.getDefault().getOffset(currentDate.getTime());
         var localDate =
