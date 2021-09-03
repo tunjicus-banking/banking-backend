@@ -21,17 +21,16 @@ import java.math.BigDecimal;
 @Service
 @RequiredArgsConstructor
 public class ScheduleService {
-    private final EmploymentHistoryRepository employmentHistoryRepository;
-    private final AccountRepository accountRepository;
-    private final TransactionRepository transactionRepository;
-    private final SavingsRepository savingsRepository;
-
     // Run every "two weeks"
     private static final int salariesSchedule = TimeService.simulatedMinutesPerDay * 14 * 1000;
 
     // Run every "month"
     private static final int interestSchedule = TimeService.simulatedMinutesPerDay * 30 * 1000;
 
+    private final EmploymentHistoryRepository employmentHistoryRepository;
+    private final AccountRepository accountRepository;
+    private final TransactionRepository transactionRepository;
+    private final SavingsRepository savingsRepository;
     Logger logger = LoggerFactory.getLogger(ScheduleService.class);
 
     @Transactional
@@ -84,7 +83,8 @@ public class ScheduleService {
         for (var account : savingsAccounts) {
             var mainAccount = accountRepository.findById(account.getId()).orElse(null);
             if (mainAccount == null) {
-                logger.warn(String.format("Failed to find main account with id %d", account.getId()));
+                logger.warn(
+                        String.format("Failed to find main account with id %d", account.getId()));
                 continue;
             }
 
@@ -98,11 +98,7 @@ public class ScheduleService {
     }
 
     private IdAndCompanyId getCompanyAccount(int positionId) {
-        var result = accountRepository.findCompanyAccount(positionId);
-        if (result.isEmpty()) {
-            return null;
-        }
-        return result.get();
+       return accountRepository.findCompanyAccount(positionId).orElse(null);
     }
 
     private AccountId getUserAccount(int userId) {
