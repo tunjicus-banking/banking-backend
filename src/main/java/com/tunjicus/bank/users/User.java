@@ -12,6 +12,7 @@ import org.hibernate.annotations.Nationalized;
 
 import javax.persistence.*;
 import javax.validation.constraints.NotBlank;
+import javax.validation.constraints.NotNull;
 import java.util.Arrays;
 import java.util.HashSet;
 import java.util.Set;
@@ -33,7 +34,7 @@ public class User {
     private String username;
 
     @Column
-    @NotBlank(message = "password cannot be blank")
+    @NotNull(message = "password cannot be null")
     private String password;
 
     @Column
@@ -63,12 +64,14 @@ public class User {
 
     public User(PostCompanyDto dto) {
         username = dto.getName();
+        password = "";
         var names = dto.getName().split(" ");
         firstName = names[0];
-        lastName = "";
 
         if (names.length > 1) {
             lastName = Strings.join(Arrays.asList(Arrays.copyOfRange(names, 1, names.length)), ' ');
+        } else {
+            lastName = "Co";
         }
     }
 }

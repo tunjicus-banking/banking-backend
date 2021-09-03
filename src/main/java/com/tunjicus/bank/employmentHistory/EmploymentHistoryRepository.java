@@ -19,6 +19,8 @@ public interface EmploymentHistoryRepository
 
     Page<EmploymentHistory> findAllByUserId(int id, Pageable pageable);
 
+    Iterable<EmploymentHistory> findAllByEndDateIsNull();
+
     boolean existsByUserIdAndPositionIdAndEndDateNull(int userId, int positionId);
 
     Optional<EmploymentHistory> findByUserIdAndEndDateIsNull(int id);

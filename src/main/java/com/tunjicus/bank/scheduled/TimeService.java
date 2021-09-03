@@ -7,9 +7,9 @@ import java.util.Date;
 import java.util.TimeZone;
 
 public class TimeService {
-    private static final BigDecimal simulatedMinutesPerDay = BigDecimal.valueOf(60);
+    public static final int simulatedMinutesPerDay = 60;
     private static final BigDecimal simulatedSecondsPerDay =
-            simulatedMinutesPerDay.multiply(BigDecimal.valueOf(60));
+            BigDecimal.valueOf(simulatedMinutesPerDay).multiply(BigDecimal.valueOf(60));
     private static final BigDecimal secondsPerDay = BigDecimal.valueOf(60 * 60 * 24);
     private static final BigDecimal ratio =
             secondsPerDay.divide(simulatedSecondsPerDay, 10, RoundingMode.HALF_EVEN);

@@ -13,7 +13,7 @@ create table savings_accounts
 
     constraint CHK_savings_accounts_type check (type = 'S'),
     constraint CHK_savings_accounts_transaction_limit check (transaction_limit between 1 and 100),
-    constraint CHK_savings_accounts_interest_rate check (interest_rate < 1),
+    constraint CHK_savings_accounts_interest_rate check (interest_rate between 0 and 1),
     constraint FK_accounts_savings foreign key (account_id, type)
         references accounts (account_id, type),
     constraint PK_savings_accounts primary key (account_id, type)

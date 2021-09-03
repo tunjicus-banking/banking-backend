@@ -68,4 +68,14 @@ public class Transaction {
         this.toType = toType;
         amount = transferDto.getAmount();
     }
+
+    public Transaction(int fromUser, int toUser, int fromAccount, String fromType, int toAccount, String toType, BigDecimal amount) {
+        this.fromUser = fromUser;
+        this.toUser = toUser;
+        this.fromAccount = fromAccount;
+        this.fromType = fromType;
+        this.toAccount = toAccount;
+        this.toType = toType;
+        this.amount = amount;
+    }
 }

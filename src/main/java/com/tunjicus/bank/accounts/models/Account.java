@@ -52,6 +52,13 @@ public class Account {
 
     public Account() {}
 
+    public Account(int userId, int bankId, PostAccountType type, BigDecimal funds) {
+        this.userId = userId;
+        this.bankId = bankId;
+        this.type = postAccountTypeToString(type);
+        this.funds = funds;
+    }
+
     public Account(PostAccountDto accountDto, int userId) {
         this.userId = userId;
         bankId = accountDto.getBankId();

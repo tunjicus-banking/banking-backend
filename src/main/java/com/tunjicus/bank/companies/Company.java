@@ -30,7 +30,8 @@ public class Company {
     @Column
     private int brandColor;
 
-    public Company(PostCompanyDto dto) {
+    public Company(PostCompanyDto dto, int id) {
+        this.id = id;
         name = dto.getName();
         description = dto.getDescription();
         brandColor = dto.getBrandColor();
