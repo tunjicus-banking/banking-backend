@@ -36,6 +36,7 @@ run_script "create_employment_history"
 run_script "create_roles"
 run_script "create_user_roles"
 run_script "create_items"
+run_script "create_news_history"
 
 # Insert data
 run_script "insert_banks"
@@ -48,3 +49,4 @@ run_script "insert_positions"
 run_script "insert_job_postings"
 run_script "insert_roles"
 run_script "insert_user_roles"
+run_script "insert_items"
