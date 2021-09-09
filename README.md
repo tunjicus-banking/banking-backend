@@ -31,3 +31,10 @@ it was created in the current year. This makes timestamps returned from
 the api unusable for any purpose other than displaying how "long ago" an
 event occurred. These simulated timestamps should not be displayed directly
 as it will just lead to confusion.
+
+## Property Encryption
+
+Some properties in [application.properties](/src/main/resources/application.properties) are encrypted.
+The tool used for this is [jasypt](https://github.com/ulisesbocchio/jasypt-spring-boot). There you can find
+all the information to use the package/plugin. Make sure to run spring boot with the following commandline argument
+passed in `--jasypt.encryptor.password=<password>` replacing `<password>` with your encryption key. 
