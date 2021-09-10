@@ -39,7 +39,8 @@ public class ItemController {
             })
     @GetMapping
     public Page<GetItemDto> getAll(
-            @Parameter(description = "The name to search for") @RequestParam(defaultValue = "") String name,
+            @Parameter(description = "The name to search for") @RequestParam(defaultValue = "")
+                    String name,
             @Parameter(description = "A user id to filter by") @RequestParam(defaultValue = "-1")
                     int userId,
             @Parameter(description = "The page number") @RequestParam(defaultValue = "0") int page,
@@ -95,7 +96,7 @@ public class ItemController {
     @Operation(
             summary = "Deletes an item",
             responses = {
-                @ApiResponse(responseCode = "200", description = "Item has been deleted"),
+                @ApiResponse(responseCode = "204", description = "Item has been deleted"),
                 @ApiResponse(
                         responseCode = "401",
                         description = "You need to be logged in to perform this action",
@@ -113,5 +114,28 @@ public class ItemController {
     @ResponseStatus(HttpStatus.NO_CONTENT)
     public void delete(@Parameter(description = "The id of the item") @PathVariable int id) {
         itemService.delete(id);
+    }
+
+    @Operation(
+            summary = "Purchase an item",
+            responses = {
+                @ApiResponse(responseCode = "204", description = "Item has been purchased"),
+                @ApiResponse(
+                        responseCode = "401",
+                        description = "You need to be logged in to perform this action",
+                        content = @Content(schema = @Schema(implementation = ErrorResponse.class))),
+                @ApiResponse(
+                        responseCode = "403",
+                        description = "You don't have permission to perform this action",
+                        content = @Content(schema = @Schema(implementation = ErrorResponse.class))),
+                @ApiResponse(
+                        responseCode = "404",
+                        description = "Item has not been found",
+                        content = @Content(schema = @Schema(implementation = ErrorResponse.class)))
+            })
+    @PostMapping("/purchase/{id}")
+    @ResponseStatus(HttpStatus.NO_CONTENT)
+    public void purchase(@Parameter(description = "The id of the item") @PathVariable int id) {
+        itemService.purchaseItem(id);
     }
 }

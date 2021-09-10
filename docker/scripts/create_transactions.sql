@@ -13,6 +13,7 @@ create table transactions
     from_type        nvarchar(1) not null,
     to_account       int         not null,
     to_type          nvarchar(1) not null,
+    item_id          int,
     amount           money       not null check (amount > 0),
     transaction_time datetime2   not null default getdate(),
 
@@ -23,6 +24,8 @@ create table transactions
     constraint FK_accounts_transactions_from_account foreign key (from_account, from_type)
         references accounts (account_id, type) on delete no action,
     constraint FK_accounts_transactions_to_account foreign key (to_account, to_type)
-        references accounts (account_id, type) on delete no action
+        references accounts (account_id, type) on delete no action,
+    constraint FK_items_transactions foreign key (item_id)
+        references items (item_id) on delete no action
 )
 go

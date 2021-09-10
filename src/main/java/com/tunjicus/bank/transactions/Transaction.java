@@ -1,5 +1,7 @@
 package com.tunjicus.bank.transactions;
 
+import com.tunjicus.bank.accounts.models.Account;
+import com.tunjicus.bank.items.Item;
 import com.tunjicus.bank.transactions.dtos.PostTransactionDto;
 import com.tunjicus.bank.transactions.dtos.SelfTransferDto;
 import lombok.Getter;
@@ -43,6 +45,9 @@ public class Transaction {
     private String toType;
 
     @Column
+    private int itemId;
+
+    @Column
     private BigDecimal amount;
 
     @Column(insertable = false, updatable = false)
@@ -77,5 +82,16 @@ public class Transaction {
         this.toAccount = toAccount;
         this.toType = toType;
         this.amount = amount;
+    }
+
+    public Transaction(int fromUser, Item item, Account fromAccount, Account toAccount) {
+        this.fromUser = fromUser;
+        toUser = item.getUserId();
+        this.fromAccount = fromAccount.getId();
+        fromType = fromAccount.getType();
+        this.toAccount = toAccount.getId();
+        toType = toAccount.getType();
+        itemId = item.getId();
+        amount = item.getPrice();
     }
 }

@@ -8,6 +8,7 @@ import com.tunjicus.bank.companies.exceptions.CompanyExistsException;
 import com.tunjicus.bank.companies.exceptions.CompanyNotFoundException;
 import com.tunjicus.bank.items.exceptions.ItemExistsException;
 import com.tunjicus.bank.items.exceptions.ItemNotFoundException;
+import com.tunjicus.bank.items.exceptions.SelfPurchaseException;
 import com.tunjicus.bank.jobPostings.exceptions.CompanyApplicationException;
 import com.tunjicus.bank.jobPostings.exceptions.InvalidDuplicateApplicationException;
 import com.tunjicus.bank.jobPostings.exceptions.JobPostingNotFoundException;
@@ -67,7 +68,8 @@ public class GlobalExceptionHandler {
         NoCheckingAccountException.class,
         TransactionException.class,
         UserValidationException.class,
-        ItemExistsException.class
+        ItemExistsException.class,
+        SelfPurchaseException.class
     })
     public ResponseEntity<ErrorResponse> handleBadRequest(Exception e) {
         return handleExceptions(HttpStatus.BAD_REQUEST, e);

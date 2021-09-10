@@ -90,7 +90,8 @@ public class TransactionService {
         return new SelfTransferDto(t);
     }
 
-    private GetTransactionDto saveTransaction(
+    @Transactional
+    public GetTransactionDto saveTransaction(
             Account fromAccount, Account toAccount, PostTransactionDto transactionDto) {
         fromAccount.setFunds(fromAccount.getFunds().subtract(transactionDto.getAmount()));
         toAccount.setFunds(toAccount.getFunds().add(transactionDto.getAmount()));
