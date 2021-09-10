@@ -53,7 +53,7 @@ public class ScheduleService {
     private final NewsHistoryRepository newsHistoryRepository;
     private final ApiKeys apiKeys;
     private final OkHttpClient client = new OkHttpClient();
-    Logger logger = LoggerFactory.getLogger(ScheduleService.class);
+    private final Logger logger = LoggerFactory.getLogger(ScheduleService.class);
 
     // Delay one hour so repeated starts don't trigger event
     @Transactional

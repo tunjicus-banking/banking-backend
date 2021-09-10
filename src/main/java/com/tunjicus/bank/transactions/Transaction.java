@@ -45,7 +45,7 @@ public class Transaction {
     private String toType;
 
     @Column
-    private int itemId;
+    private Integer itemId;
 
     @Column
     private BigDecimal amount;
@@ -54,8 +54,8 @@ public class Transaction {
     @Temporal(TemporalType.TIMESTAMP)
     private Date transactionTime;
 
-    public Transaction(PostTransactionDto transactionDto, TransactionAccountInfo info) {
-        fromUser = transactionDto.getFrom();
+    public Transaction(int userId, PostTransactionDto transactionDto, TransactionAccountInfo info) {
+        fromUser = userId;
         toUser = transactionDto.getTo();
         fromAccount = info.fromAccount();
         fromType = info.fromType();

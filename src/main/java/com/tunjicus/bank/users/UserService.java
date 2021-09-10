@@ -141,7 +141,7 @@ public class UserService {
         }
 
         return transactionRepository
-                .findAllByFromUserOrToUser(userId, userId, pageable)
+                .findAllUserTransactions(userId, pageable)
                 .map(GetTransactionDto::new);
     }
 }

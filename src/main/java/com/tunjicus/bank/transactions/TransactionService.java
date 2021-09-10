@@ -12,8 +12,12 @@ import com.tunjicus.bank.transactions.exceptions.InsufficientFundsException;
 import com.tunjicus.bank.transactions.exceptions.NoCheckingAccountException;
 import com.tunjicus.bank.transactions.exceptions.SelfTransferException;
 import lombok.RequiredArgsConstructor;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+import org.springframework.http.HttpStatus;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
+import org.springframework.web.server.ResponseStatusException;
 
 import java.util.Date;
 
@@ -25,18 +29,18 @@ public class TransactionService {
     private final TransactionRepository transactionRepository;
     private final AccountRepository accountRepository;
     private final AuthService authService;
+    private final Logger logger = LoggerFactory.getLogger(TransactionService.class);
 
     GetTransactionDto usersTransfer(PostTransactionDto transactionDto) {
-        if (transactionDto.getFrom() == transactionDto.getTo()) {
+        var userId = authService.getCurrentUser().getId();
+        if (userId == transactionDto.getTo()) {
             throw new SelfTransferException("Self transfer via this method is not allowed");
         }
 
         var fromAccount =
                 accountRepository
                         .findByUserIdEqualsAndFundsGreaterThanEqualAndTypeEqualsAndClosedIsFalse(
-                                transactionDto.getFrom(),
-                                transactionDto.getAmount(),
-                                AccountType.CHECKING.label);
+                                userId, transactionDto.getAmount(), AccountType.CHECKING.label);
 
         var toAccount =
                 accountRepository.findByUserIdEqualsAndTypeEqualsAndClosedIsFalse(
@@ -65,17 +69,12 @@ public class TransactionService {
                         .findByUserIdEqualsAndIdEqualsAndFundsGreaterThanAndClosedIsFalse(
                                 userId, dto.getFrom(), dto.getAmount())
                         .orElseThrow(
-                                () ->
-                                        new ValidAccountNotFoundException(
-                                                userId, dto.getFrom()));
+                                () -> new ValidAccountNotFoundException(userId, dto.getFrom()));
 
         var toAccount =
                 accountRepository
                         .findByUserIdEqualsAndIdEqualsAndClosedIsFalse(userId, dto.getTo())
-                        .orElseThrow(
-                                () ->
-                                        new ValidAccountNotFoundException(
-                                                userId, dto.getTo()));
+                        .orElseThrow(() -> new ValidAccountNotFoundException(userId, dto.getTo()));
 
         fromAccount.setFunds(fromAccount.getFunds().subtract(dto.getAmount()));
         toAccount.setFunds(toAccount.getFunds().add(dto.getAmount()));
@@ -90,7 +89,6 @@ public class TransactionService {
         return new SelfTransferDto(t);
     }
 
-    @Transactional
     public GetTransactionDto saveTransaction(
             Account fromAccount, Account toAccount, PostTransactionDto transactionDto) {
         fromAccount.setFunds(fromAccount.getFunds().subtract(transactionDto.getAmount()));
@@ -105,8 +103,16 @@ public class TransactionService {
                         fromAccount.getType(),
                         toAccount.getId(),
                         toAccount.getType());
-        var t = transactionRepository.save(new Transaction(transactionDto, info));
-        t.setTransactionTime(new Date());
-        return new GetTransactionDto(t);
+        var t =
+                transactionRepository.save(
+                        new Transaction(fromAccount.getUserId(), transactionDto, info));
+        var dto = transactionRepository.getDbDto(t.getId());
+        if (dto.isEmpty()) {
+            logger.error(String.format("Failed to create db dto for transaction %d", t.getId()));
+            throw new ResponseStatusException(
+                    HttpStatus.INTERNAL_SERVER_ERROR, "Internal Server Error");
+        }
+
+        return new GetTransactionDto(dto.get());
     }
 }
