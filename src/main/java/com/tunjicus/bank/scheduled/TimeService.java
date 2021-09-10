@@ -33,7 +33,7 @@ public class TimeService {
         var adjustedDifference = secondDifference.multiply(ratio);
         var duration = Duration.ofSeconds(adjustedDifference.longValue());
 
-        if (utcDate.after(currentDate)) {
+        if ((utcDate.getTime() + offset) > currentDate.getTime()) {
             return Date.from(localDate.plus(duration).toInstant(ZoneOffset.UTC));
         }
 
